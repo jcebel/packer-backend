@@ -33,3 +33,15 @@ export PORT=3000
 export MONGODB_URI="mongodb://localhost:27017/moviedb"
 export JWT_SECRET="very secret secret"
 ```
+
+## Start the project
+
+**Development environment**
+```bash
+npm run devstart
+```
+
+**Production environment**
+```bash
+npm start
+```
