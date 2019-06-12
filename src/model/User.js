@@ -4,8 +4,11 @@ const UserSchema = new mongoose.Schema({
     firstName: String,
     birthday: Date,
     homeAddress: {
-        type: Schema.types.ObjectId,
-        ref:"Location"},
+        city: String,
+        street: String,
+        houseNumber: Number,
+        postalCode: String
+    },
     driver: {
         type: Schema.types.ObjectId,
         ref:"Driver",

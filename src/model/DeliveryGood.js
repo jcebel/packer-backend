@@ -7,14 +7,16 @@ const DeliveryGoodSchema = new mongoose.Schema({
     price: Number,
     deliveryState: String,
     destination: {
-        type: mongoose.SchemaTypes.ObjectId,
-        required: true,
-        ref: "Location"
+        city: String,
+        street: String,
+        houseNumber: Number,
+        postalCode: String
     },
     origination: {
-        type: mongoose.SchemaTypes.ObjectId,
-        required: true,
-        ref: "Location"
+        city: String,
+        street: String,
+        houseNumber: Number,
+        postalCode: String
     }
 
 });
