@@ -10,14 +10,14 @@ const UserSchema = new mongoose.Schema({
         postalCode: String
     },
     driver: {
-        type: Schema.types.ObjectId,
+        type: mongoose.SchemaTypes.ObjectId,
         ref:"Driver",
         required: function() {
             return this.deliveryClient === null;
         }
         },
     deliveryClient: {
-        type: Schema.types.ObjectId,
+        type: mongoose.SchemaTypes.ObjectId,
         ref:"DeliveryClient",
         required: function() {
             return this.driver === null;
