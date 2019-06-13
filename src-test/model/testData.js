@@ -7,12 +7,10 @@ const handleErr = function(err) {
 
 // User
 const executeTest = function() {
-    deliveryClient = new model.deliveryClient({});
+    const deliveryClient = new model.deliveryClient({});
 
-    deliveryClient.save(function (err) {
-        if (err) {
-            handleErr(err)
-        }
+    deliveryClient.save().then( function(client) {
+
         const jon = new model.user({
             name: "Jon",
             lastName: "Doe",
@@ -24,13 +22,13 @@ const executeTest = function() {
                 postalCode: "81554"
             }
         });
-
-        jon.save(function (err) {
-            if (err) {
-                handleErr(err);
-            }
-        });
-    });
+        jon.deliveryClient = client._id;
+        return jon.save();
+    }).then(() => {
+        model.user.find().populate('User').then((clients)  => {
+           console.log(clients);
+        }).catch(handleErr);
+    }).catch(handleErr);
 
 };
 
