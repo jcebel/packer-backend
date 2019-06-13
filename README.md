@@ -20,10 +20,6 @@ npm install
 ```
 mongod --dbpath relative/path/to/database
 ```
-* Create all database schemes and import data to begin with
-```
-mongorestore dump/
-```
 
 **Set the environment variables**
 
@@ -40,6 +36,14 @@ export JWT_SECRET="very secret secret"
 ```bash
 npm run devstart
 ```
+
+**Testing environment**
+```bash
+npm test
+```
+This will allow you to execute the scripts contained in src-test/model/testData.js. 
+Those tests are currently set up to fill the database step by step.
+You may change the scripts to your own needs. 
 
 **Production environment**
 ```bash
