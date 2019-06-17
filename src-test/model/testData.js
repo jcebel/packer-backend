@@ -25,7 +25,7 @@ const executeTest = function() {
         jon.deliveryClient = client._id;
         return jon.save();
     }).then(() => {
-        model.user.find().populate('User').then((clients)  => {
+        model.user.find().populate('deliveryClient').then((clients)  => {
            console.log(clients);
         }).catch(handleErr);
     }).catch(handleErr);
