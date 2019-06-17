@@ -1,0 +1,27 @@
+{
+  "name": "packer-backend",
+  "version": "1.0.0",
+  "description": "SEBAMaster Packer's Packend Application",
+  "main": "index.js",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jonny3576/packer-backend/"
+  },
+  "author": "jonny3576",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jonny3576/packer-backend/issues"
+  },
+  "scripts": {
+    "test": "node ./index.js test",
+    "start": "node ./index.js",
+    "devstart": "nodemon ./index.js"
+  },
+  "dependencies": {
+    "mongoose": "^5.5.14"
+  },
+  "devDependencies": {
+    "nodemon": "1.14.12"
+  }
+}
