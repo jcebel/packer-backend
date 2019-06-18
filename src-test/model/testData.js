@@ -34,6 +34,7 @@ const executeTest = function() {
 
     //add deliveryGood
     const dishwasher = new model.deliveryGood({
+        name: "Dishwasher",
         deliveryDate: new Date(2019,9,18),
         weight: 80,
         size: 3,

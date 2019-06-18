@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const DeliveryGoodSchema = new mongoose.Schema({
+    name: String,
     deliveryDate: Date,
     weight: Number,
     size: Number,
