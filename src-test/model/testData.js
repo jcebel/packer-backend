@@ -5,8 +5,10 @@ const handleErr = function(err) {
     process.exit(1);
 };
 
-// User
+
 const executeTest = function() {
+
+    //add User
     const deliveryClient = new model.deliveryClient({});
 
     deliveryClient.save().then( function(client) {
@@ -29,6 +31,28 @@ const executeTest = function() {
            console.log(clients);
         }).catch(handleErr);
     }).catch(handleErr);
+
+    //add deliveryGood
+    const dishwasher = new model.deliveryGood({
+        deliveryDate: new Date(2019,9,18),
+        weight: 80,
+        size: 3,
+        price: 28,
+        deliveryState: "Waiting for Routing",
+        destination: {
+            city: "Muenchen",
+            street: "Theresienstrasse",
+            houseNumber: 5,
+            postalCode: "84762"
+        },
+        origination: {
+            city: "München",
+            street: "Arcisstrasse",
+            houseNumber: "28",
+            postalCode: "86361"
+        }
+    });
+    dishwasher.save();
 
 };
 
