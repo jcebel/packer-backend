@@ -11,7 +11,23 @@ const list  = (req, res) => {
         }));
 };
 
+const create = (req, res) => {
+
+    DeliveryGoodModel.create(req.body)
+        .then(deliveryGood => {
+            res.status(201).json(deliveryGood);
+            console.log("Added successfully:");
+            console.log(deliveryGood);
+        })
+        .catch(error => res.status(500).json({
+            error: 'Internal server error',
+            message: error.message
+        }));
+};
+
+
 
 module.exports = {
-    list
+    list,
+    create
 };
