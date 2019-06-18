@@ -1,6 +1,6 @@
 "use strict";
 
-const DeliveryGoodModel = require('../model/DeliveryGood');
+const DeliveryGoodModel = require('../models/DeliveryGood');
 
 const list  = (req, res) => {
     DeliveryGoodModel.find({}).exec()

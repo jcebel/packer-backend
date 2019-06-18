@@ -1,4 +1,4 @@
-const model = require('../../src/model/dataModel');
+const model = require('../../src/models/dataModel');
 
 const handleErr = function(err) {
     console.log(err);

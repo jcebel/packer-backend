@@ -7,4 +7,4 @@ const vehicle = require('./Vehicle');
 
 module.exports = {
     deliveryClient,deliveryGood, driver, user, route, vehicle
-}
+};
