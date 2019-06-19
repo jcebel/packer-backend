@@ -81,9 +81,19 @@ const update = (req, res) => {
         }));
 };
 
+const remove = (req, res) => {
+    DeliveryGoodModel.findByIdAndRemove(req.params.id).exec()
+        .then(() => res.status(200).json({message: `Delivery good with id${req.params.id} was deleted`}))
+        .catch(error => res.status(500).json({
+            error: 'Internal server error',
+            message: error.message
+        }));
+};
+
 module.exports = {
     list,
     create,
     read,
-    update
+    update,
+    remove
 };
