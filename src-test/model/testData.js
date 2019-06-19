@@ -8,30 +8,6 @@ const handleErr = function(err) {
 
 const executeTest = function() {
 
-    //add User
-    const deliveryClient = new model.deliveryClient({});
-
-    deliveryClient.save().then( function(client) {
-
-        const jon = new model.user({
-            name: "Jon",
-            lastName: "Doe",
-            birthday: new Date('1995-12-17T03:24:00'),
-            homeAddress: {
-                city: "Muenchen",
-                street: "Luitpoldstrasse",
-                houseNumber: 1,
-                postalCode: "81554"
-            }
-        });
-        jon.deliveryClient = client._id;
-        return jon.save();
-    }).then(() => {
-        model.user.find().populate('deliveryClient').then((clients)  => {
-           console.log(clients);
-        }).catch(handleErr);
-    }).catch(handleErr);
-
     //add deliveryGood
     const dishwasher = new model.deliveryGood({
         name: "Dishwasher",
@@ -53,17 +29,73 @@ const executeTest = function() {
             postalCode: "86361"
         }
     });
-    dishwasher.save().then( function(delGood){
-
+    dishwasher.save().then( function(delGood) {
+        //add delivery client
         const dishwasherClient = new model.deliveryClient({});
         dishwasherClient.goodsToDeliver = delGood._id;
-        return dishwasherClient.save();
-        })
-        .then(() =>{
-            model.deliveryClient.find().populate('goodsToDeliver').then((goods)  => {
-            console.log(goods);
+        dishwasherClient.save().then(function (client) {
+            const delClient = new model.user({
+                name: "Max",
+                lastName: "Mustermann",
+                birthday: new Date('1995-12-17T03:24:00'),
+                homeAddress: {
+                    city: "Muenchen",
+                    street: "Luitpoldstrasse",
+                    houseNumber: 1,
+                    postalCode: "81554"
+                }
+            });
+            delClient.deliveryClient = client._id;
+            return delClient.save();
+        }).then(() => {
+            model.deliveryClient.find().populate('goodsToDeliver').then((goods) => {
+                console.log(goods);
+            }).catch(handleErr);
         }).catch(handleErr);
     }).catch(handleErr);
-};
+
+
+    //add vehicle
+    const vehicle = new model.vehicle({
+        maxDistance: 10,
+        maxSize: 15,
+        maxItems: 8 });
+    vehicle.save().then( function(veh) {
+        const driver = new model.driver({driverLicenseNumber: "abcde12345", isAvailable: true, vehicle: veh._id});
+        driver.save().then(function (driv) {
+            const seppDriver = new model.user({
+                name: "Sepp",
+                lastName: "Müller",
+                birthday: new Date('1995-05-08T03:24:00'),
+                homeAddress: {
+                    city: "Muenchen",
+                    street: "Implerstraße",
+                    houseNumber: 1,
+                    postalCode: "81371"
+                }
+            });
+            seppDriver.driver = driv._id;
+            seppDriver.save().then(function (seppUser) {
+                const route = new model.route({
+                    kilometers: 10,
+                    estimatedArrivalTimes: [new Date('1995-12-17T03:24:00')],
+                    items: [dishwasher._id],
+                    auctionBids: [{
+                        owner: driver._id,
+                        bid: 4,
+                        timestamp: new Date('2019-06-19T03:24:00')
+                    }]
+                });
+                return route.save();
+            }).then(() => {
+                model.deliveryClient.find().populate('goodsToDeliver').then((goods) => {
+                    console.log("Everything worked");
+                }).catch(handleErr);
+            }).catch(handleErr);
+
+        }).catch(handleErr);
+    }).catch(handleErr);
+
+}
 
 module.exports = executeTest;
