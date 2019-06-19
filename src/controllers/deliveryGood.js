@@ -25,9 +25,28 @@ const create = (req, res) => {
         }));
 };
 
+const read   = (req, res) => {
+    DeliveryGoodModel.findById(req.params.id).exec()
+        .then(deliveryGood => {
+
+            if (!deliveryGood) return res.status(404).json({
+                error: 'Not Found',
+                message: `Delivery good not found`
+            });
+
+            res.status(200).json(deliveryGood)
+
+        })
+        .catch(error => res.status(500).json({
+            error: 'Internal Server Error',
+            message: error.message
+        }));
+
+};
 
 
 module.exports = {
     list,
-    create
+    create,
+    read
 };
