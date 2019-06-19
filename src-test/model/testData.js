@@ -48,7 +48,7 @@ const executeTest = function() {
             delClient.deliveryClient = client._id;
             return delClient.save();
         }).then(() => {
-            model.deliveryClient.find().populate('goodsToDeliver').then((goods) => {
+            model.deliveryClient.find().then((goods) => {
                 console.log(goods);
             }).catch(handleErr);
         }).catch(handleErr);
@@ -88,8 +88,8 @@ const executeTest = function() {
                 });
                 return route.save();
             }).then(() => {
-                model.deliveryClient.find().populate('goodsToDeliver').then((goods) => {
-                    console.log("Everything worked");
+                model.route.find().then((goods) => {
+                    console.log(goods);
                 }).catch(handleErr);
             }).catch(handleErr);
 

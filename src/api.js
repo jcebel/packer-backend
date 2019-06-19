@@ -5,6 +5,8 @@ const bodyParser = require('body-parser');
 
 const deliveryGood = require('./routes/deliveryGood');
 const deliveryClient = require("./routes/deliveryClient");
+const route = require("./routes/route");
+
 
 const api = express();
 
@@ -19,5 +21,7 @@ api.get('/', (req, res) => {
 
 api.use('/deliverygoods', deliveryGood);
 api.use('/deliveryclient', deliveryClient);
+api.use('/route', route);
+
 
 module.exports = api;
