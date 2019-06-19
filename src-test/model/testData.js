@@ -53,8 +53,17 @@ const executeTest = function() {
             postalCode: "86361"
         }
     });
-    dishwasher.save();
+    dishwasher.save().then( function(delGood){
 
+        const dishwasherClient = new model.deliveryClient({});
+        dishwasherClient.goodsToDeliver = delGood._id;
+        return dishwasherClient.save();
+        })
+        .then(() =>{
+            model.deliveryClient.find().populate('goodsToDeliver').then((goods)  => {
+            console.log(goods);
+        }).catch(handleErr);
+    }).catch(handleErr);
 };
 
 module.exports = executeTest;
