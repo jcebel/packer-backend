@@ -2,13 +2,21 @@
 
 const express    = require('express');
 const bodyParser = require('body-parser');
+const helmet     = require('helmet');
 
+const middleware = require('./middleware');
 const deliveryGood = require('./routes/deliveryGood');
 const deliveryClient = require("./routes/deliveryClient");
+const route = require("./routes/route");
+
 
 const api = express();
 
+// Adding Basic Middlewares
+api.use(helmet());
 api.use(bodyParser.json());
+api.use(bodyParser.urlencoded({ extended: false }));
+api.use(middleware.allowCrossDomain);
 
 
 api.get('/', (req, res) => {
@@ -19,5 +27,7 @@ api.get('/', (req, res) => {
 
 api.use('/deliverygoods', deliveryGood);
 api.use('/deliveryclient', deliveryClient);
+api.use('/route', route);
+
 
 module.exports = api;
