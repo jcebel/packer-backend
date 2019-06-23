@@ -7,7 +7,4 @@ const VehicleSchema = new mongoose.Schema({
     maxItems: Number
 });
 
-const Vehicle = mongoose.model("Vehicle", VehicleSchema);
-
-
-module.exports = {Vehicle};
+module.exports = mongoose.model("Vehicle", VehicleSchema);
