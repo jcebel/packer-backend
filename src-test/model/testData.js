@@ -140,6 +140,8 @@ const executeTest = function() {
                 seppDriver.driver = driv._id;
                 seppDriver.save().then(function (seppUser) {
                     const route = new model.route({
+                        date: new Date('2019-06-20'),
+                        vehicleType: "Car",
                         kilometers: 10,
                         estimatedArrivalTimes: [new Date('2019-06-20T03:24:00')],
                         items: [dishwasher, bike],
