@@ -1,14 +1,20 @@
 "use strict";
 
 const RouteModel = require('../models/Route');
-
+const internalServerError = (error, res) => res.status(500).json({
+    error: 'Internal server error',
+    message: error.message
+});
 const list = (req, res) => {
     RouteModel.find({}).exec()
         .then(routes => res.status(200).json(routes))
-        .catch(error => res.status(500).json({
-            error: 'Internal server error',
-            message: error.message
-        }));
+        .catch(error => internalServerError(error,res));
+};
+
+const listByDate = (req, res) => {
+    RouteModel.find().byDate(req.params["date"]).exec()
+        .then(routes=> res.status(200).json(routes))
+        .catch(error => internalServerError(error,res));
 };
 
 const read = (req, res) => {
@@ -23,10 +29,7 @@ const read = (req, res) => {
             res.status(200).json(route)
 
         })
-        .catch(error => res.status(500).json({
-            error: 'Internal Server Error',
-            message: error.message
-        }));
+        .catch(error => internalServerError(error,res));
 
 };
 
@@ -47,15 +50,13 @@ const update = (req, res) => {
             res.status(200).json(route);
             console.log(req.body);
         })
-        .catch(error => res.status(500).json({
-            error: 'Internal server error',
-            message: error.message
-        }));
+        .catch((error) => internalServerError(error,res));
 };
 
 
 module.exports = {
     list,
+    listByDate,
     read,
     update
 };
