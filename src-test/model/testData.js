@@ -55,6 +55,52 @@ const executeTest = function () {
     }).catch(handleErr);
 
 
+    //add deliveryGood
+    const bike = new model.deliveryGood({
+        name: "Bike",
+        deliveryDate: new Date(2019,6,24),
+        weight: 50,
+        size: 3,
+        price: 30,
+        deliveryState: "Waiting for Routing",
+        destination: {
+            city: "Muenchen",
+            street: "Implerstraße",
+            houseNumber: 14,
+            postalCode: "81371"
+        },
+        origination: {
+            city: "München",
+            street: "Odeonsplatz",
+            houseNumber: "28",
+            postalCode: "86361"
+        }
+    });
+    bike.save().then( function(delGood) {
+        //add delivery client
+        const bikeClient = new model.deliveryClient({});
+        bikeClient.goodsToDeliver = delGood._id;
+        bikeClient.save().then(function (client) {
+            const delClient = new model.user({
+                name: "Jonas",
+                lastName: "Ebel",
+                birthday: new Date('1995-05-17T03:24:00'),
+                homeAddress: {
+                    city: "Muenchen",
+                    street: "Moosacher Straße",
+                    houseNumber: 1,
+                    postalCode: "81554"
+                }
+            });
+            delClient.deliveryClient = client._id;
+            return delClient.save();
+        }).then(() => {
+            model.deliveryClient.find().then((goods) => {
+                console.log(goods);
+            }).catch(handleErr);
+        }).catch(handleErr);
+    }).catch(handleErr);
+
     //add vehicle
     const vehicle = new model.vehicle({
         maxDistance: 10,
@@ -80,7 +126,7 @@ const executeTest = function () {
                 const route = new model.route({
                     kilometers: 10,
                     estimatedArrivalTimes: [new Date('2019-06-20T03:24:00')],
-                    items: [dishwasher._id],
+                    items: [dishwasher, bike],
                     auctionBids: [{
                         owner: driver._id,
                         bid: 4,
@@ -211,6 +257,7 @@ const executeTest = function () {
             });
         }).catch(handleErr);
     })();
+
 };
 
 module.exports = executeTest;
