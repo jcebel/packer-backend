@@ -3,8 +3,8 @@ const mongoose = require('mongoose');
 const DeliveryGoodSchema = new mongoose.Schema({
     name: String,
     deliveryDate: Date,
-    weight: Number,
-    size: Number,
+    weight: String, //small, medium, large
+    size: String,   //light, medium, heavy
     price: Number,
     deliveryState: String,
     destination: {

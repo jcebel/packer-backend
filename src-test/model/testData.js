@@ -12,8 +12,8 @@ const executeTest = function () {
     const dishwasher = new model.deliveryGood({
         name: "Dishwasher",
         deliveryDate: new Date(2019, 9, 18),
-        weight: 80,
-        size: 3,
+        weight: "heavy",
+        size: "large",
         price: 28,
         deliveryState: "Waiting for Routing",
         destination: {
@@ -35,8 +35,8 @@ const executeTest = function () {
         dishwasherClient.goodsToDeliver = delGood._id;
         dishwasherClient.save().then(function (client) {
             const delClient = new model.user({
-                name: "Max",
-                lastName: "Mustermann",
+                firstName: "Max",
+                name: "Mustermann",
                 birthday: new Date('1995-12-17T03:24:00'),
                 homeAddress: {
                     city: "Muenchen",
@@ -59,8 +59,8 @@ const executeTest = function () {
     const bike = new model.deliveryGood({
         name: "Bike",
         deliveryDate: new Date(2019, 6, 24),
-        weight: 50,
-        size: 3,
+        weight: "heavy",
+        size: "large",
         price: 30,
         deliveryState: "Waiting for Routing",
         destination: {
@@ -82,8 +82,8 @@ const executeTest = function () {
         bikeClient.goodsToDeliver = delGood._id;
         bikeClient.save().then(function (client) {
             const delClient = new model.user({
-                name: "Jonas",
-                lastName: "Ebel",
+                firstName: "Jonas",
+                name: "Ebel",
                 birthday: new Date('1995-05-17T03:24:00'),
                 homeAddress: {
                     city: "Muenchen",
@@ -106,8 +106,8 @@ const executeTest = function () {
     const driver2 = new model.driver({driverLicenseNumber: "üpoiuzkn123123", isAvailable: true})
     driver2.save().then(function (driv) {
         return new model.user({
-            name: "Franz",
-            lastName: "Xaver",
+            firstName: "Franz",
+            name: "Xaver",
             birthday: new Date('1996-05-08T03:24:00'),
             homeAddress: {
                 city: "Muenchen",
@@ -127,8 +127,8 @@ const executeTest = function () {
             const driver = new model.driver({driverLicenseNumber: "abcde12345", isAvailable: true, vehicle: veh._id});
             driver.save().then(function (driv) {
                 const seppDriver = new model.user({
-                    name: "Sepp",
-                    lastName: "Müller",
+                    firstName: "Sepp",
+                    name: "Müller",
                     birthday: new Date('1995-05-08T03:24:00'),
                     homeAddress: {
                         city: "Muenchen",
@@ -169,8 +169,8 @@ const executeTest = function () {
     (function createADifferentRoute() {
         const presentItem = new model.deliveryGood({
             name: "Present",
-            weight: 20,
-            size: 2,
+            weight: "medium",
+            size: "medium",
             price: 10,
             deliveryState: "Routed",
             destination: {
@@ -188,8 +188,8 @@ const executeTest = function () {
         });
         const ornament = new model.deliveryGood({
             name: "Ornament",
-            weight: 1,
-            size: 1,
+            weight: "light",
+            size: "small",
             price: 5,
             deliveryState: "Routed",
             destination: {
@@ -207,8 +207,8 @@ const executeTest = function () {
         });
         const books = new model.deliveryGood({
             name: "Books",
-            weight: 20,
-            size: 4,
+            weight: "medium",
+            size: "medium",
             price: 15,
             deliveryState: "Routed",
             destination: {
@@ -243,8 +243,8 @@ const executeTest = function () {
             });
             return driver2.save().then(function (driv) {
                 const maxl = new model.user({
-                    name: "Maxl",
-                    lastName: "Rainer",
+                    firstName: "Maxl",
+                    name: "Rainer",
                     birthday: new Date('1953-02-18'),
                     homeAddress: {
                         city: "Muenchen",
@@ -260,6 +260,7 @@ const executeTest = function () {
                         date: "2019-06-24",
                         estimatedArrivalTimes: [new Date('2019-06-24T20:24:00')],
                         items: [presentItem, books, ornament],
+                        vehicleType:"bike",
                         auctionBids: [{
                             owner: driver2._id,
                             bid: 30,
