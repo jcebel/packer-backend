@@ -8,6 +8,7 @@ const middleware = require('./middleware');
 const deliveryGood = require('./routes/deliveryGood');
 const deliveryClient = require("./routes/deliveryClient");
 const route = require("./routes/route");
+const auth = require("./routes/auth");
 
 
 const api = express();
@@ -25,6 +26,7 @@ api.get('/', (req, res) => {
     });
 });
 
+api.use('/auth', auth);
 api.use('/deliverygoods', deliveryGood);
 api.use('/deliveryclient', deliveryClient);
 api.use('/route', route);
