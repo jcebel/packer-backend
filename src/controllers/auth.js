@@ -77,8 +77,26 @@ const login = (req,res) => {
 
 };
 
+const user = (req, res) => {
+    UserModel.findById(req.userId).select('username').exec()
+        .then(user => {
+
+            if (!user) return res.status(404).json({
+                error: 'Not Found',
+                message: `User not found`
+            });
+
+            res.status(200).json(user)
+        })
+        .catch(error => res.status(500).json({
+            error: 'Internal Server Error',
+            message: error.message
+        }));
+};
+
 
 module.exports = {
     register,
-    login
+    login,
+    user
 };
