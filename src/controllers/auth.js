@@ -94,9 +94,14 @@ const user = (req, res) => {
         }));
 };
 
+const logout = (req, res) => {
+    res.status(200).send({ token: null });
+};
+
 
 module.exports = {
     register,
     login,
-    user
+    user,
+    logout
 };
