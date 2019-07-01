@@ -260,7 +260,7 @@ const executeTest = function () {
                         date: "2019-06-24",
                         estimatedArrivalTimes: [new Date('2019-06-24T20:24:00')],
                         items: [presentItem, books, ornament],
-                        vehicleType:"bike",
+                        vehicleType: "bike",
                         auctionBids: [{
                             owner: driver2._id,
                             bid: 30,
@@ -269,6 +269,62 @@ const executeTest = function () {
                             owner: driver2._id,
                             bid: 23,
                             timestamp: new Date('2019-06-24T17:01:00')
+                        }],
+                        start: [{
+                            city: "München",
+                            street: "Balanstraße",
+                            houseNumber: "29",
+                            postalCode: "85794",
+                            location: {
+                                type: 'Point',
+                                coordinates:[48.125891, 11.595632]
+                            }
+                        }, {
+                            city: "München",
+                            street: "Kolumbusplatz",
+                            houseNumber: "28",
+                            postalCode: "86361",
+                            location: {
+                                type: 'Point',
+                                coordinates:[48.125891, 11.595632]
+                            }
+                        }, {
+                            city: "München",
+                            street: "Ungererstraße",
+                            houseNumber: "28",
+                            postalCode: "86361",
+                            location: {
+                                type: 'Point',
+                                coordinates:[48.125891, 11.595632]
+                            }
+                        }],
+                        end: [ {
+                            city: "Muenchen",
+                            street: "Fraunhoferstraße",
+                            houseNumber: 12,
+                            postalCode: "84762",
+                            location: {
+                                type: 'Point',
+                                coordinates:[48.125891, 11.595632]
+                            }
+                        }, {
+                            city: "Muenchen",
+                            street: "Gärtnerplatz",
+                            houseNumber: 2,
+                            postalCode: "84762",
+                            location: {
+                                type: 'Point',
+                                coordinates:[48.125891, 11.595632]
+                            }
+                        }, {
+                            city: "München",
+                            street: "Kolumbusplatz",
+                            houseNumber: "28",
+                            postalCode: "86361",
+                            location: {
+                                type: 'Point',
+                                coordinates:[48.125891, 11.595632]
+                            }
                         }]
                     });
                     return route.save();

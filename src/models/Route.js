@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const deliveryGood = require('./DeliveryGood');
+const Address = require('./AddressSchema').AddressSchema;
 
 const RouteSchema = new mongoose.Schema({
     date: Date,
@@ -11,7 +12,9 @@ const RouteSchema = new mongoose.Schema({
         owner:{type:mongoose.SchemaTypes.ObjectId, ref:"Driver"},
         bid:Number,
         timestamp: Date
-    }]
+    }],
+    start:[Address],
+    end:[Address]
 });
 
 RouteSchema.query.byDate = function (date) {
