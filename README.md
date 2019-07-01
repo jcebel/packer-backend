@@ -32,14 +32,6 @@ export JWT_SECRET="very secret secret"
 
 ## Start the project
 
-**Start the Route Building Process**
-
-This triggers the route building based on the existing DeliveryGoods of today with a delivery Date of today.
-
-```bash
-npm run routing
-```
-
 **Development environment**
 ```bash
 npm run devstart
@@ -56,4 +48,13 @@ You may change the scripts to your own needs.
 **Production environment**
 ```bash
 npm start
+```
+
+**Route Building Process**
+
+This triggers the route building based on the existing DeliveryGoods of today with a delivery Date of today.
+You may add optionally a specific date for the call. This creates a route with all Delivery Goods for the specified Date.
+
+```bash
+npm run routing [<date in format YYYY-MM-DD>]
 ```
