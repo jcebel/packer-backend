@@ -13,8 +13,8 @@ const RouteSchema = new mongoose.Schema({
         bid:Number,
         timestamp: Date
     }],
-    start:[Address],
-    end:[Address]
+    collect:[Address],
+    deliver:[Address]
 });
 
 RouteSchema.query.byDate = function (date) {
