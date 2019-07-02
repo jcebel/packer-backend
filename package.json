@@ -14,7 +14,7 @@
     "url": "https://github.com/jonny3576/packer-backend/issues"
   },
   "scripts": {
-    "test": "node ./index.js google",
+    "test": "node ./index.js test",
     "start": "node ./index.js",
     "routing": "node ./index-routeBuilder.js",
     "devstart": "nodemon ./index.js"
