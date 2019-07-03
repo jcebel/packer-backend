@@ -11,9 +11,9 @@ const register = (req,res) => {
         message: 'The request body must contain a password property'
     });
 
-    if (!Object.prototype.hasOwnProperty.call(req.body, 'username')) return res.status(400).json({
+    if (!Object.prototype.hasOwnProperty.call(req.body, 'email')) return res.status(400).json({
         error: 'Bad Request',
-        message: 'The request body must contain a username property'
+        message: 'The request body must contain an email property'
     });
 
     const user = Object.assign(req.body, {password: bcrypt.hashSync(req.body.password, 8)});
@@ -21,7 +21,7 @@ const register = (req,res) => {
 
     UserModel.create(user)
         .then(user => {
-            const token = jwt.sign({ id: user._id, username: user.username }, config.JwtSecret, {
+            const token = jwt.sign({ id: user._id, email: user.email }, config.JwtSecret, {
                 expiresIn: 86400 // expires in 24 hours
             });
 
@@ -52,18 +52,18 @@ const login = (req,res) => {
         message: 'The request body must contain a password property'
     });
 
-    if (!Object.prototype.hasOwnProperty.call(req.body, 'username')) return res.status(400).json({
+    if (!Object.prototype.hasOwnProperty.call(req.body, 'email')) return res.status(400).json({
         error: 'Bad Request',
-        message: 'The request body must contain a username property'
+        message: 'The request body must contain an email property'
     });
 
-    UserModel.findOne({username: req.body.username}).exec()
+    UserModel.findOne({email: req.body.email}).exec()
         .then(user => {
 
             const isPasswordValid = bcrypt.compareSync(req.body.password, user.password);
             if (!isPasswordValid) return res.status(401).send({token: null });
 
-            const token = jwt.sign({ id: user._id, username: user.username }, config.JwtSecret, {
+            const token = jwt.sign({ id: user._id, email: user.email }, config.JwtSecret, {
                 expiresIn: 86400 // expires in 24 hours
             });
 
@@ -78,7 +78,7 @@ const login = (req,res) => {
 };
 
 const user = (req, res) => {
-    UserModel.findById(req.userId).select('username').exec()
+    UserModel.findById(req.userId).select('email').exec()
         .then(user => {
 
             if (!user) return res.status(404).json({
