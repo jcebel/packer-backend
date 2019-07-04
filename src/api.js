@@ -9,15 +9,16 @@ const deliveryGood = require('./routes/deliveryGood');
 const deliveryClient = require("./routes/deliveryClient");
 const route = require("./routes/route");
 const auth = require("./routes/auth");
+const cors = require("cors");
 
 
 const api = express();
 
 // Adding Basic Middlewares
+api.use(cors());
 api.use(helmet());
 api.use(bodyParser.json());
 api.use(bodyParser.urlencoded({ extended: false }));
-api.use(middleware.allowCrossDomain);
 
 
 api.get('/', (req, res) => {
