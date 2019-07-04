@@ -12,4 +12,8 @@ const DeliveryGoodSchema = new mongoose.Schema({
     origination: Address
 });
 
+DeliveryGoodSchema.query.byDate = function (date) {
+    return this.where({deliveryDate: date});
+};
+
 module.exports = mongoose.model('DeliveryGood', DeliveryGoodSchema);

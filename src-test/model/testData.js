@@ -178,6 +178,7 @@ const executeTest = function () {
         const presentItem = new model.deliveryGood({
             name: "Present",
             weight: "medium",
+            deliveryDate: new Date(2019, 9, 18),
             size: "medium",
             price: 10,
             deliveryState: "Routed",
@@ -197,6 +198,7 @@ const executeTest = function () {
         const ornament = new model.deliveryGood({
             name: "Ornament",
             weight: "light",
+            deliveryDate: new Date(2019, 9, 18),
             size: "small",
             price: 5,
             deliveryState: "Routed",
@@ -216,6 +218,7 @@ const executeTest = function () {
         const books = new model.deliveryGood({
             name: "Books",
             weight: "medium",
+            deliveryDate: new Date(2019, 9, 18),
             size: "medium",
             price: 15,
             deliveryState: "Routed",
