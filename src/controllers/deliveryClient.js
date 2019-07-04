@@ -3,7 +3,10 @@
 const DeliveryGoodModel = require('../models/DeliveryClient');
 
 const listDeliveryGoods = (req, res) => {
-    DeliveryGoodModel.findById(req.params.id).select('goodsToDeliver').exec()
+    DeliveryGoodModel.findById(req.params.id)
+        .populate('goodsToDeliver')
+        .select('goodsToDeliver')
+        .exec()
         .then(delGoods => {
             if (!delGoods) return res.status(404).json({
                 error: 'Not Found',
