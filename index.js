@@ -7,6 +7,7 @@ const api = require('./src/api');
 const config = require('./src/config.js');
 
 const test = require('./src-test/model/testData');
+const google = require('./src-test/GoogleTest');
 
 api.set('port', config.port);
 
@@ -19,6 +20,9 @@ mongoose.connect(config.mongoURI, {useNewUrlParser: true})
             // only execute test if node is started as test.
             if (process.argv[2] === 'test') {
                 test();
+            }
+            if (process.argv[2] === 'google') {
+                google();
             }
             server.listen(config.port);
         })
