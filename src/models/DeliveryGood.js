@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Address = require('./AddressSchema').AddressSchema;
 
 const DeliveryGoodSchema = new mongoose.Schema({
     name: String,
@@ -7,19 +8,8 @@ const DeliveryGoodSchema = new mongoose.Schema({
     size: String,   //light, medium, heavy
     price: Number,
     deliveryState: String,
-    destination: {
-        city: String,
-        street: String,
-        houseNumber: Number,
-        postalCode: String
-    },
-    origination: {
-        city: String,
-        street: String,
-        houseNumber: Number,
-        postalCode: String
-    }
-
+    destination: Address,
+    origination: Address
 });
 
 module.exports = mongoose.model('DeliveryGood', DeliveryGoodSchema);
