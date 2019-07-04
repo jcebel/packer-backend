@@ -1,5 +1,13 @@
 const mongoose = require('mongoose');
 const UserSchema = new mongoose.Schema({
+    email: {
+        type: String,
+        required: true
+    },
+    password: {
+        type: String,
+        required: true //TODO: Why is password "unique: true" in SEBA Movie app?
+    },
     name: String,
     firstName: String,
     birthday: Date,

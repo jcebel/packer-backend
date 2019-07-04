@@ -35,6 +35,8 @@ const executeTest = function () {
         dishwasherClient.goodsToDeliver = delGood._id;
         dishwasherClient.save().then(function (client) {
             const delClient = new model.user({
+                email: "maxl",
+                password: "abc123",
                 firstName: "Max",
                 name: "Mustermann",
                 birthday: new Date('1995-12-17T03:24:00'),
@@ -82,6 +84,8 @@ const executeTest = function () {
         bikeClient.goodsToDeliver = delGood._id;
         bikeClient.save().then(function (client) {
             const delClient = new model.user({
+                email: "jonasl",
+                password: "abc123",
                 firstName: "Jonas",
                 name: "Ebel",
                 birthday: new Date('1995-05-17T03:24:00'),
@@ -103,9 +107,11 @@ const executeTest = function () {
 
     //other driver
 
-    const driver2 = new model.driver({driverLicenseNumber: "üpoiuzkn123123", isAvailable: true})
+    const driver2 = new model.driver({driverLicenseNumber: "üpoiuzkn123123", isAvailable: true});
     driver2.save().then(function (driv) {
         return new model.user({
+            email: "franzl",
+            password: "abc123",
             firstName: "Franz",
             name: "Xaver",
             birthday: new Date('1996-05-08T03:24:00'),
@@ -127,6 +133,8 @@ const executeTest = function () {
             const driver = new model.driver({driverLicenseNumber: "abcde12345", isAvailable: true, vehicle: veh._id});
             driver.save().then(function (driv) {
                 const seppDriver = new model.user({
+                    email: "seppl",
+                    password: "abc123",
                     firstName: "Sepp",
                     name: "Müller",
                     birthday: new Date('1995-05-08T03:24:00'),
@@ -243,6 +251,8 @@ const executeTest = function () {
             });
             return driver2.save().then(function (driv) {
                 const maxl = new model.user({
+                    email: "maxl",
+                    password: "abc123",
                     firstName: "Maxl",
                     name: "Rainer",
                     birthday: new Date('1953-02-18'),

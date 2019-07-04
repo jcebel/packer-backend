@@ -4,26 +4,12 @@ const jwt    = require('jsonwebtoken');
 
 const config = require ('./config');
 
-const allowCrossDomain = (req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-    res.header('Access-Control-Allow-Headers', '*');
-
-    // intercept OPTIONS method
-    if ('OPTIONS' == req.method) {
-        res.sendStatus(200);
-    }
-    else {
-        next();
-    }
-};
-
 const checkAuthentication = (req, res, next) => {
 
     // check header or url parameters or post parameters for token
-    let token = ""
+    let token = "";
     if(req.headers.authorization) {
-        token = req.headers.authorization.substring(4);
+        token = req.headers.authorization;
     }
 
     if (!token)
@@ -57,7 +43,6 @@ const errorHandler = (err, req, res, next) => {
 
 
 module.exports = {
-    allowCrossDomain,
     checkAuthentication,
     errorHandler
 };
