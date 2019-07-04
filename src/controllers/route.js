@@ -52,11 +52,32 @@ const update = (req, res) => {
         })
         .catch((error) => internalServerError(error,res));
 };
+const updateBid = (req, res) => {
+    if (Object.keys(req.body).length === 0) {
+        return res.status(400).json({
+            error: 'Bad Request',
+            message: 'The request body is empty'
+        });
+    }
+    RouteModel.findByIdAndUpdate(req.params.id, {
+        $push: {auctionBids: {
+                "owner": req.body.owner,
+                "bid": req.body.bid,
+                "timestamp": new Date()
+            }
+        }
+    },{new: true, runValidators: true}).exec()
+        .then(route => {
+            res.status(200).json(route);
+        })
+        .catch((error) => internalServerError(error,res));
+};
 
 
 module.exports = {
     list,
     listByDate,
     read,
-    update
+    update,
+    updateBid
 };
