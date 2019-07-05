@@ -19,7 +19,7 @@ const executeTest = function () {
         destination: {
             city: "Muenchen",
             street: "Theresienstrasse",
-            houseNumber: 5,
+            houseNumber: "5",
             postalCode: "84762"
         },
         origination: {
@@ -43,7 +43,7 @@ const executeTest = function () {
                 homeAddress: {
                     city: "Muenchen",
                     street: "Luitpoldstrasse",
-                    houseNumber: 1,
+                    houseNumber: "1",
                     postalCode: "81554"
                 }
             });
@@ -68,7 +68,7 @@ const executeTest = function () {
         destination: {
             city: "Muenchen",
             street: "Implerstraße",
-            houseNumber: 14,
+            houseNumber: "14",
             postalCode: "81371"
         },
         origination: {
@@ -92,7 +92,7 @@ const executeTest = function () {
                 homeAddress: {
                     city: "Muenchen",
                     street: "Moosacher Straße",
-                    houseNumber: 1,
+                    houseNumber: "1",
                     postalCode: "81554"
                 }
             });
@@ -118,7 +118,7 @@ const executeTest = function () {
             homeAddress: {
                 city: "Muenchen",
                 street: "Leopoldstrasse",
-                houseNumber: 1,
+                houseNumber: "1",
                 postalCode: "81371"
             }
         }).save();
@@ -141,7 +141,7 @@ const executeTest = function () {
                     homeAddress: {
                         city: "Muenchen",
                         street: "Implerstraße",
-                        houseNumber: 1,
+                        houseNumber: "1",
                         postalCode: "81371"
                     }
                 });
@@ -185,7 +185,7 @@ const executeTest = function () {
             destination: {
                 city: "Muenchen",
                 street: "Fraunhoferstraße",
-                houseNumber: 12,
+                houseNumber: "12",
                 postalCode: "84762"
             },
             origination: {
@@ -205,7 +205,7 @@ const executeTest = function () {
             destination: {
                 city: "Muenchen",
                 street: "Gärtnerplatz",
-                houseNumber: 2,
+                houseNumber: "2",
                 postalCode: "84762"
             },
             origination: {
@@ -262,7 +262,7 @@ const executeTest = function () {
                     homeAddress: {
                         city: "Muenchen",
                         street: "Kolumbusplatz",
-                        houseNumber: 1,
+                        houseNumber: "1",
                         postalCode: "81371"
                     }
                 });
@@ -314,7 +314,7 @@ const executeTest = function () {
                         end: [ {
                             city: "Muenchen",
                             street: "Fraunhoferstraße",
-                            houseNumber: 12,
+                            houseNumber: "12",
                             postalCode: "84762",
                             location: {
                                 type: 'Point',
@@ -323,7 +323,7 @@ const executeTest = function () {
                         }, {
                             city: "Muenchen",
                             street: "Gärtnerplatz",
-                            houseNumber: 2,
+                            houseNumber: "2",
                             postalCode: "84762",
                             location: {
                                 type: 'Point',
