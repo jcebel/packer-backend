@@ -1,4 +1,4 @@
-module.export = {
+const mock = {
   destination_addresses: [
     'Garching - Forschungszentrum, 85748 Garching bei München, Germany',
     'Implerstraße 12A, 81371 München, Germany',
@@ -49,6 +49,7 @@ module.export = {
       ]
     },
     {
+
       elements: [
         {
           distance: { text: '14.5 km', value: 14489 },
@@ -69,5 +70,6 @@ module.export = {
     }
   ],
   status: 'OK'
-}
+};
 
+module.exports = mock;
