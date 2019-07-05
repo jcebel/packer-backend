@@ -54,8 +54,8 @@ function createTestDataItem() {
  * 5. For each Collection:
  *      5.1 Order Starts based on shorted distance -> Start Array
  *      5.2 Create Route Object with Dist, Items, collect, date
- *      5.3 TODO Collect All Ends Belonging to this start collection -> Array with end points
- *      5.4 TODO Hand this to GoogleService -> Distance Matrix for End Position.
+ *      5.3 Collect All Ends Belonging to this start collection -> Array with end points
+ *      5.4 Hand this to GoogleService -> Distance Matrix for End Position.
  *      5.5 TODO GoogleService.dist(Collect[collect.length - 1],all End Positions) -> Return Dist_Start-End
  *      5.6 TODO Order End points beginning with lowest value in Dist_Start-End -> Array of end Points
  *      5.7 TODO Add array to Route.deliver
@@ -123,16 +123,15 @@ function createTestDataItem() {
     await mongoose.connect(config.mongoURI, {useNewUrlParser: true});
     const allItems = await model.deliveryGood.find().byDate(buildingDate);
     console.log("%      found " + allItems.length + " items for routing   %");
-
     /* TODO uncomment
-    const distanceMatrixStart = await GoogleService(allItems.map(
+    const distanceMatrixStart = await GoogleService.getSquaredDistanceMatrix(allItems.map(
         (item) => item.origination.toString()), 'driving'
     );
 
-    const distanceMatrixEnd = await GoogleService(allItems.map(
+    const distanceMatrixEnd = await GoogleService.getSquaredDistanceMatrix(allItems.map(
         (item) => item.destination.toString()), 'driving'
-    ); */
-
+    );
+    */
     const distanceMatrixStart = require('./src-test/mock-distanceMatrix').mockstart;
     const distanceMatrixEnd = require('./src-test/mock-distanceMatrix').mockend;
 

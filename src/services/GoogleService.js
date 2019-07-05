@@ -1,9 +1,13 @@
 const apiKey = 'AIzaSyAf7aIGVns1ktVf5sw__NGaygucuRsqCiw';
+const distance = require('google-distance-matrix');
 
-const getDistanceMatrix = function(locations, mode){
-    var distance = require('google-distance-matrix');
-    let origins = locations;
-    var destinations = locations;
+const getSquaredDistanceMatrix = function(locations, mode){
+    return getDistanceMatrix(locations, location, mode);
+};
+
+const getDistanceMatrix = function(start, endpoints, mode) {
+    const origins = Array.isArray(start) ? start: [start];
+    const destinations = endpoints;
 
     distance.key(apiKey);
     distance.units('metric');
@@ -20,6 +24,6 @@ const getDistanceMatrix = function(locations, mode){
             }
         });
     });
-}
+};
 
-module.exports = getDistanceMatrix;
+module.exports = {getSquaredDistanceMatrix:getSquaredDistanceMatrix, getDistanceMatrix:getDistanceMatrix};
