@@ -5,6 +5,7 @@ const model = require('./src/models/dataModel');
 const util = require('util');
 const cluster = require('hierarchical-clustering');
 const ObjectId = require('mongoose').Types.ObjectId;
+const GoogleService = require('./src/services/GoogleService');
 
 console.log("%       Starting Route Builder      %");
 
@@ -52,12 +53,13 @@ function createTestDataItem() {
  * 4. Use a hierarchical clustering algorithm to separate Start points into different Route
  * 5. For each Collection:
  *      5.1 Order Starts based on shorted distance -> Start Array
- *      5.2 TODO Create Route Object with Dist, Items, collect, date
+ *      5.2 Create Route Object with Dist, Items, collect, date
  *      5.3 TODO Collect All Ends Belonging to this start collection -> Array with end points
  *      5.4 TODO Hand this to GoogleService -> Distance Matrix for End Position.
  *      5.5 TODO GoogleService.dist(Collect[collect.length - 1],all End Positions) -> Return Dist_Start-End
  *      5.6 TODO Order End points beginning with lowest value in Dist_Start-End -> Array of end Points
  *      5.7 TODO Add array to Route.deliver
+ *          5.7.1 TODO Calculate ETA, Distance and Weight.
  *      5.8 TODO Route.vehicleType = VehicleTypeService.vehicleRecommendation(route)
  *      5.9 TODO mongodb.save(route)
  * END
@@ -72,7 +74,7 @@ function createTestDataItem() {
         });
     }
 
-    function buildDistanceStruct (addressList, distanceMatrix) {
+    function buildDistanceStruct(addressList, distanceMatrix) {
         return distanceMatrix.origin_addresses.reduce((total, item, i) => {
             const address = addressList[i];
             total[address._id] = {
@@ -83,63 +85,78 @@ function createTestDataItem() {
         }, {});
     }
 
-    function retrieveDistance(a,b, distStruct, distMatrix) {
-        return  distMatrix.rows[distStruct[a._id].position].elements[distStruct[b._id].position].duration.value
+    function retrieveDistance(a, b, distStruct, distMatrix) {
+        return distMatrix.rows[distStruct[a._id].position].elements[distStruct[b._id].position].duration.value
     }
 
-    function clusterHierarchical(allStarts, distanceMatrixStart, distStruct) {
+    function clusterHierarchical(items, distanceMatrixStart, distStruct) {
 
-        const distance = (a, b) => retrieveDistance(a,b,distStruct,distanceMatrixStart);
+        const distance = (a, b) => retrieveDistance(a, b, distStruct, distanceMatrixStart);
         // single linkage according to docs.
         const linkage = (distances) => Math.min.apply(null, distances);
         const levels = cluster({
-            input: allStarts,
+            input: items,
             distance: distance,
             linkage: linkage,
             minClusters: 2, // TODO: Calculate Minimum Clusters based on size of allStarts?
         });
-        return mapLevelsToData(levels, allStarts);
+        return mapLevelsToData(levels, items);
     }
 
-    function sortAddressesByDistance(addresses, distanceMatrix, distStruct) {
-        let address = addresses[0];
-        const sortedAddresses = [];
-        for (let i = 0; i < addresses.length; i++) {
-            distStruct[address._id].alreadyVisited = true;
-            sortedAddresses.push(address);
-            address = addresses.reduce((total, otherAddress) => {
-               if(address._id != otherAddress && !distStruct[otherAddress._id].alreadyVisited) {
-                   let distance = retrieveDistance(address, otherAddress, distStruct, distanceMatrix);
-                   return distance < total.dist ? {item:otherAddress, dist:distance} : total;
-               }
-               return total;
-            }, {dist:Number.MAX_VALUE}).item;
+    function sortItemsByDistance(items, distanceMatrix, distStruct) {
+        let item = items[0];
+        const sortedItems = [];
+        for (let i = 0; i < items.length; i++) {
+            distStruct[item._id].alreadyVisited = true;
+            sortedItems.push(item);
+            item = items.reduce((total, otherItem) => {
+                if (item._id != otherItem && !distStruct[otherItem._id].alreadyVisited) {
+                    let distance = retrieveDistance(item, otherItem, distStruct, distanceMatrix);
+                    return distance < total.dist ? {item: otherItem, dist: distance} : total;
+                }
+                return total;
+            }, {dist: Number.MAX_VALUE}).item;
         }
-        return sortedAddresses;
+        return sortedItems;
     }
 
     await mongoose.connect(config.mongoURI, {useNewUrlParser: true});
     const allItems = await model.deliveryGood.find().byDate(buildingDate);
-    console.log("%      found " + allItems.length + " items for routing   %")
-    //TODO : Uncomment when not using test data. const allStarts = allItems.map((item) => item.origination);
-    //TODO stringify allstarts
-    const allStarts = createTestDataItem();
-    const distanceMatrixStart = require('./src-test/mock-distanceMatrix');
+    console.log("%      found " + allItems.length + " items for routing   %");
 
+    /* TODO uncomment
+    const distanceMatrixStart = await GoogleService(allItems.map(
+        (item) => item.origination.toString()), 'driving'
+    );
+
+    const distanceMatrixEnd = await GoogleService(allItems.map(
+        (item) => item.destination.toString()), 'driving'
+    ); */
+
+    const distanceMatrixStart = require('./src-test/mock-distanceMatrix').mockstart;
+    const distanceMatrixEnd = require('./src-test/mock-distanceMatrix').mockend;
 
     // console.log(util.inspect(distStruct,false, null, true));
-    const distStartStruct = buildDistanceStruct(allStarts, distanceMatrixStart);
+    const distStartStruct = buildDistanceStruct(allItems, distanceMatrixStart);
+    const distEndStruct = buildDistanceStruct(allItems, distanceMatrixEnd);
 
-    const startCluster = clusterHierarchical(allStarts, distanceMatrixStart, distStartStruct);
+    const startCluster = clusterHierarchical(allItems, distanceMatrixStart, distStartStruct);
     console.log("%     Startpoints are being sorted  %");
-    startCluster.forEach((cluster) => {
-        console.log("%           Clustersize: "+ cluster.length +"          %");
-        let startAddresses = sortAddressesByDistance(cluster, distanceMatrixStart, distStartStruct);
-
+    const routes = startCluster.map((deliveryItems, i) => {
+        console.log("%         Clustersize " + i + ": " + deliveryItems.length + "          %");
+        const startAddresses = sortItemsByDistance(
+            deliveryItems, distanceMatrixStart, distStartStruct)
+            .map((item) => item.origination);
+        const route = new model.route(
+            new model.route({
+                date: buildingDate,
+                items: deliveryItems,
+                collect: startAddresses
+            }));
+        return route;
     });
 
-
-
+    console.log("%     Endpoints are being sorted    %");
 
 })()
     .then(() => {
