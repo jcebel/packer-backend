@@ -268,7 +268,7 @@ const executeTest = function () {
                     const route = new model.route({
                         kilometers: 20,
                         date: "2019-06-24",
-                        estimatedArrivalTimes: [new Date('2019-06-24T20:24:00')],
+                        estimatedArrivalTimes: [new Date('2019-06-24T20:24:00'), new Date('2019-06-24T18:24:00')],
                         items: [presentItem, books, ornament],
                         vehicleType: "bike",
                         auctionBids: [{
@@ -280,7 +280,7 @@ const executeTest = function () {
                             bid: 23,
                             timestamp: new Date('2019-06-24T17:01:00')
                         }],
-                        start: [{
+                        collect: [{
                             city: "München",
                             street: "Balanstraße",
                             houseNumber: "29",
@@ -308,7 +308,7 @@ const executeTest = function () {
                                 coordinates:[48.125891, 11.595632]
                             }
                         }],
-                        end: [ {
+                        deliver: [ {
                             city: "Muenchen",
                             street: "Fraunhoferstraße",
                             houseNumber: 12,
