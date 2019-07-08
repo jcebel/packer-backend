@@ -224,7 +224,7 @@ const executeTest = function () {
             deliveryState: "Routed",
             destination: {
                 city: "Muenchen",
-                street: "Silberhornstra0e",
+                street: "Silberhornstraße",
                 houseNumber: 5,
                 postalCode: "84762"
             },
