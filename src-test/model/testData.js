@@ -161,6 +161,62 @@ const executeTest = function () {
                             owner: driver._id,
                             bid: 3,
                             timestamp: new Date('2019-06-19T04:24:00')
+                        }],
+                        collect: [{
+                            city: "München",
+                            street: "Fröttmaninger Straße",
+                            houseNumber: 18,
+                            postalCode: "80805",
+                            location: {
+                                type: 'Point',
+                                coordinates:[48.125891, 11.595632]
+                            }
+                        }, {
+                            city: "München",
+                            street: "Grasmeierstraße ",
+                            houseNumber: 10,
+                            postalCode: "80805",
+                            location: {
+                                type: 'Point',
+                                coordinates:[48.125891, 11.595632]
+                            }
+                        }, {
+                            city: "München",
+                            street: "Ungererstraße",
+                            houseNumber: 28,
+                            postalCode: "86361",
+                            location: {
+                                type: 'Point',
+                                coordinates:[48.125891, 11.595632]
+                            }
+                        }],
+                        deliver: [ {
+                            city: "Muenchen",
+                            street: "Max-Bill-Straße",
+                            houseNumber: 7,
+                            postalCode: "80807",
+                            location: {
+                                type: 'Point',
+                                coordinates:[48.125891, 11.595632]
+                            }
+                        }, {
+                            city: "Muenchen",
+                            street: "Marianne-Brandt-Straße",
+                            houseNumber: 22,
+                            postalCode: "80807",
+                            location: {
+                                type: 'Point',
+                                coordinates:[48.125891, 11.595632]
+                            }
+                        }, {
+                            city: "München",
+                            street: "Heinrich-Kley-Straße",
+                            houseNumber: 12,
+                            postalCode: "80807",
+                            location: {
+                                type: 'Point',
+                                coordinates:[48.125891, 11.595632]
+                            }
                         }]
                     });
                     return route.save();
@@ -283,7 +339,7 @@ const executeTest = function () {
                             bid: 23,
                             timestamp: new Date('2019-06-24T17:01:00')
                         }],
-                        start: [{
+                        collect: [{
                             city: "München",
                             street: "Balanstraße",
                             houseNumber: "29",
@@ -294,9 +350,9 @@ const executeTest = function () {
                             }
                         }, {
                             city: "München",
-                            street: "Kolumbusplatz",
-                            houseNumber: "28",
-                            postalCode: "86361",
+                            street: "Implerstraße",
+                            houseNumber: "24",
+                            postalCode: "81371",
                             location: {
                                 type: 'Point',
                                 coordinates:[48.125891, 11.595632]
@@ -311,7 +367,7 @@ const executeTest = function () {
                                 coordinates:[48.125891, 11.595632]
                             }
                         }],
-                        end: [ {
+                        deliver: [ {
                             city: "Muenchen",
                             street: "Fraunhoferstraße",
                             houseNumber: "12",
