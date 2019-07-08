@@ -5,7 +5,7 @@ const Address = require('./AddressSchema').AddressSchema;
 const RouteSchema = new mongoose.Schema({
     date: Date,
     vehicleType: String,
-    kilometers: Number,
+    meters: Number,
     estimatedTime: Number,
     items: [deliveryGood.schema],
     auctionBids: [{

@@ -150,7 +150,7 @@ const executeTest = function () {
                     const route = new model.route({
                         date: new Date('2019-06-20'),
                         vehicleType: "car",
-                        kilometers: 10,
+                        meters: 10,
                         estimatedTime: 7200,
                         items: [dishwasher, bike],
                         auctionBids: [{
@@ -269,7 +269,7 @@ const executeTest = function () {
                 maxl.driver = driver2._id;
                 return maxl.save().then(function (maxl) {
                     const route = new model.route({
-                        kilometers: 20,
+                        meters: 20,
                         date: "2019-06-24",
                         estimatedTime: 7200,
                         items: [presentItem, books, ornament],

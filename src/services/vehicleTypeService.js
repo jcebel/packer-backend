@@ -1,7 +1,7 @@
 const calculateRouteIndex = function(items){
-    var resIndex = 0;
-    var weightIndex = 0;
-    var sizeIndex = 0;
+    let resIndex = 0;
+    let weightIndex = 0;
+    let sizeIndex = 0;
 
     items.forEach(function(elem) {
         if(elem.weight === "small"){
@@ -29,11 +29,11 @@ const calculateRouteIndex = function(items){
     });
 
     return resIndex;
-}
+};
 
 const vehicleRecommendation = function(route){
-    var routeIndex = calculateRouteIndex(route.items);
-    if(routeIndex <= 8 && route.kilometers <= 15){
+    const routeIndex = calculateRouteIndex(route.items);
+    if(routeIndex <= 8 && route.meters <= 15000){
         return "bike";
     }
     if(routeIndex <= 80){
@@ -42,6 +42,6 @@ const vehicleRecommendation = function(route){
     if(routeIndex > 80){
         return "van";
     }
-}
+};
 
 module.exports = vehicleRecommendation;
