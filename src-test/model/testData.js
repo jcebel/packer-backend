@@ -151,7 +151,7 @@ const executeTest = function () {
                         date: new Date('2019-06-20'),
                         vehicleType: "car",
                         kilometers: 10,
-                        estimatedArrivalTimes: [new Date('2019-06-20T02:48:00'), new Date('2019-06-20T03:24:00'), new Date('2019-06-20T06:06:00')],
+                        estimatedTime: 7200,
                         items: [dishwasher, bike],
                         auctionBids: [{
                             owner: driver._id,
@@ -271,7 +271,7 @@ const executeTest = function () {
                     const route = new model.route({
                         kilometers: 20,
                         date: "2019-06-24",
-                        estimatedArrivalTimes: [new Date('2019-06-24T20:24:00')],
+                        estimatedTime: 7200,
                         items: [presentItem, books, ornament],
                         vehicleType: "bike",
                         auctionBids: [{
