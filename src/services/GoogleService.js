@@ -2,7 +2,7 @@ const apiKey = 'AIzaSyAf7aIGVns1ktVf5sw__NGaygucuRsqCiw';
 const distance = require('google-distance-matrix');
 
 const getSquaredDistanceMatrix = function(locations, mode){
-    return getDistanceMatrix(locations, location, mode);
+    return getDistanceMatrix(locations, locations, mode);
 };
 
 const getDistanceMatrix = function(start, endpoints, mode) {
