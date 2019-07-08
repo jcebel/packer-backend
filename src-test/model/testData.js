@@ -339,7 +339,7 @@ const executeTest = function () {
                         collect: [{
                             city: "München",
                             street: "Balanstraße",
-                            houseNumber: 29,
+                            houseNumber: "29",
                             postalCode: "85794",
                             location: {
                                 type: 'Point',
@@ -348,7 +348,7 @@ const executeTest = function () {
                         }, {
                             city: "München",
                             street: "Implerstraße",
-                            houseNumber: 24,
+                            houseNumber: "24",
                             postalCode: "81371",
                             location: {
                                 type: 'Point',
@@ -357,7 +357,7 @@ const executeTest = function () {
                         }, {
                             city: "München",
                             street: "Ungererstraße",
-                            houseNumber: 28,
+                            houseNumber: "28",
                             postalCode: "86361",
                             location: {
                                 type: 'Point',
@@ -367,7 +367,7 @@ const executeTest = function () {
                         deliver: [ {
                             city: "Muenchen",
                             street: "Fraunhoferstraße",
-                            houseNumber: 12,
+                            houseNumber: "12",
                             postalCode: "84762",
                             location: {
                                 type: 'Point',
@@ -376,7 +376,7 @@ const executeTest = function () {
                         }, {
                             city: "Muenchen",
                             street: "Gärtnerplatz",
-                            houseNumber: 2,
+                            houseNumber: "2",
                             postalCode: "84762",
                             location: {
                                 type: 'Point',
@@ -385,7 +385,7 @@ const executeTest = function () {
                         }, {
                             city: "München",
                             street: "Kolumbusplatz",
-                            houseNumber: 28,
+                            houseNumber: "28",
                             postalCode: "86361",
                             location: {
                                 type: 'Point',
