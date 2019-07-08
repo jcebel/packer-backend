@@ -7,6 +7,7 @@ const cluster = require('hierarchical-clustering');
 const ObjectId = require('mongoose').Types.ObjectId;
 const GoogleService = require('./src/services/GoogleService');
 const mock_google = require('./src-test/mock-distanceMatrix');
+const vehicleRecommendation = require('./src/services/vehicleTypeService');
 
 console.log("%       Starting Route Builder      %");
 
@@ -205,6 +206,7 @@ function createTestDataItem() {
         route.kilometers += firstEndpoint.currentDistance + sortResult.totalDistance;
         route.estimatedTime += firstEndpoint.currentDuration + sortResult.duration;
         route.deliver = sortResult.sortedItems.map((item) => item.destination);
+        route.vehicleType = vehicleRecommendation(route);
         log(route);
         console.log("%Successfully calculated collection %");
 
