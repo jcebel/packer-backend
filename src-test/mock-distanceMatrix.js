@@ -226,6 +226,51 @@ const mockend = {
     status: 'OK'
 };
 
+const start_toEnd1 = {
+  destination_addresses: [
+    'Gärtnerpl. 2, 80469 München, Germany',
+    'Theresienstraße 5, 80333 München, Germany'
+  ],
+      origin_addresses: [ 'Arcisstraße 28, 80799 München, Germany' ],
+    rows: [
+  {
+    elements: [
+      {
+        distance: { text: '3.1 km', value: 3141 },
+        duration: { text: '12 mins', value: 742 },
+        status: 'OK'
+      },
+      {
+        distance: { text: '1.2 km', value: 1235 },
+        duration: { text: '5 mins', value: 303 },
+        status: 'OK'
+      }
+    ]
+  }
+],
+    status: 'OK'
+};
+const start_to_end2 = {
+  destination_addresses: [ 'Munich, Germany', 'Fraunhoferstraße 12, 80469 München, Germany' ],
+  origin_addresses: [ 'Balanstraße 29, 81669 München, Germany' ],
+  rows: [
+    {
+      elements: [
+        {
+          distance: { text: '1.6 km', value: 1611 },
+          duration: { text: '6 mins', value: 370 },
+          status: 'OK'
+        },
+        {
+          distance: { text: '2.2 km', value: 2205 },
+          duration: { text: '7 mins', value: 407 },
+          status: 'OK'
+        }
+      ]
+    }
+  ],
+  status: 'OK'
+};
 
 
-module.exports = {mockend:mockend, mockstart:mockstart};
+module.exports = {mockend:mockend, mockstart:mockstart, start_to_end: [start_toEnd1, start_to_end2] };

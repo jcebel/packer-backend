@@ -6,6 +6,7 @@ const util = require('util');
 const cluster = require('hierarchical-clustering');
 const ObjectId = require('mongoose').Types.ObjectId;
 const GoogleService = require('./src/services/GoogleService');
+const mock_google = require('./src-test/mock-distanceMatrix');
 
 console.log("%       Starting Route Builder      %");
 
@@ -56,12 +57,13 @@ function createTestDataItem() {
  *      5.2 Create Route Object with Dist, Items, collect, date
  *      5.3 Collect All Ends Belonging to this start collection -> Array with end points
  *      5.4 Hand this to GoogleService -> Distance Matrix for End Position.
- *      5.5 TODO GoogleService.dist(Collect[collect.length - 1],all End Positions) -> Return Dist_Start-End
- *      5.6 TODO Order End points beginning with lowest value in Dist_Start-End -> Array of end Points
- *      5.7 TODO Add array to Route.deliver
+ *      5.5 GoogleService.dist(Collect[collect.length - 1],all End Positions) -> Return Dist_Start-End
+ *      5.6 Order End points beginning with lowest value in Dist_Start-End -> Array of end Points
+ *      5.7 Add array to Route.deliver
  *          5.7.1 TODO Calculate ETA, Distance and Weight.
  *      5.8 TODO Route.vehicleType = VehicleTypeService.vehicleRecommendation(route)
  *      5.9 TODO mongodb.save(route)
+ *      5.10 TODO All Items need to be marked as Routed (In Route Model AND in the DeliveryGOOD Model)
  * END
  */
 
@@ -103,8 +105,8 @@ function createTestDataItem() {
         return mapLevelsToData(levels, items);
     }
 
-    function sortItemsByDistance(items, distanceMatrix, distStruct) {
-        let item = items[0];
+    function sortItemsByDistance(items, distanceMatrix, distStruct, indexOfFirstItem) {
+        let item = items[indexOfFirstItem ? indexOfFirstItem : 0];
         const sortedItems = [];
         for (let i = 0; i < items.length; i++) {
             distStruct[item._id].alreadyVisited = true;
@@ -132,8 +134,8 @@ function createTestDataItem() {
         (item) => item.destination.toString()), 'driving'
     );
     */
-    const distanceMatrixStart = require('./src-test/mock-distanceMatrix').mockstart;
-    const distanceMatrixEnd = require('./src-test/mock-distanceMatrix').mockend;
+    const distanceMatrixStart = mock_google.mockstart;
+    const distanceMatrixEnd = mock_google.mockend;
 
     // console.log(util.inspect(distStruct,false, null, true));
     const distStartStruct = buildDistanceStruct(allItems, distanceMatrixStart);
@@ -142,7 +144,7 @@ function createTestDataItem() {
     const startCluster = clusterHierarchical(allItems, distanceMatrixStart, distStartStruct);
     console.log("%     Startpoints are being sorted  %");
     const routes = startCluster.map((deliveryItems, i) => {
-        console.log("%         Clustersize " + i + ": " + deliveryItems.length + "          %");
+        console.log("%     Size of Cluster " + i + ": " + deliveryItems.length + "          %");
         const startAddresses = sortItemsByDistance(
             deliveryItems, distanceMatrixStart, distStartStruct)
             .map((item) => item.origination);
@@ -154,6 +156,34 @@ function createTestDataItem() {
             }));
         return route;
     });
+    console.log("%     First Endpoint is calculated  %");
+
+    // TODO remove
+    for (let i = 0; i < routes.length; i++) {
+        let route = routes[i];
+        let distanceMatrixStartEnd = mock_google.start_to_end[i];
+        /* TODO Uncomment
+        for (let route of routes) {
+
+
+             const distanceMatrixStartEnd = await GoogleService.getDistanceMatrix(route.collect[route.collect.length - 1].toString(),
+                route.items.map((item) => item.destination.toString()), 'driving');*/
+
+        let firstEndpoint = distanceMatrixStartEnd.rows[0].elements.reduce(
+            (total, entry, index) => total.currentDuration > entry.duration.value ? {
+                currentDuration: entry.duration.value,
+                itemPosition: index
+            } : total,
+            {currentDuration: Number.MAX_VALUE});
+
+        //TODO Merge Route.destination mapping with googleService call..
+        route.deliver = sortItemsByDistance(route.items, distanceMatrixEnd, distEndStruct, firstEndpoint.itemPosition)
+            .map((item) => item.destination);
+
+        console.log("%Successfully calculated collection%");
+        console.log(route);
+
+    }
 
     console.log("%     Endpoints are being sorted    %");
 
@@ -168,4 +198,7 @@ function createTestDataItem() {
         process.exit(-1);
     });
 
-
+// TODO Delete this
+function log(data) {
+    return console.log(util.inspect(data, false, null, true));
+}
