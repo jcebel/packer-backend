@@ -17,10 +17,12 @@ const getDistanceMatrix = function(start, endpoints, mode) {
         distance.matrix(origins, destinations, function(err, distances) {
             if (distances.status == 'OK') {
                 resolve(distances);
-            } else if(!locations){
-                reject('No locations entered');
+            } else if(!start || !endpoints){
+                reject('No directions entered.');
             } else if(err){
                 reject(err);
+            } else {
+                reject('Distance Matrix Returned following Status code: '+ distances.status )
             }
         });
     });

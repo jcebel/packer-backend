@@ -2,9 +2,7 @@
 const mongoose = require('mongoose');
 const config = require('./src/config.js');
 const model = require('./src/models/dataModel');
-const util = require('util');
 const cluster = require('hierarchical-clustering');
-const ObjectId = require('mongoose').Types.ObjectId;
 const GoogleService = require('./src/services/GoogleService');
 const mock_google = require('./src-test/mock-distanceMatrix');
 const vehicleRecommendation = require('./src/services/vehicleTypeService');
@@ -12,45 +10,9 @@ const vehicleRecommendation = require('./src/services/vehicleTypeService');
 console.log("%       Starting Route Builder      %");
 
 const buildingDate = process.argv[2] ? new Date(process.argv[2]) : new Date(new Date().toDateString());
-const driverStartDate = process.argv[3] ? new Date(process.argv[3]) : new Date(buildingDate);
-if (!process.argv[3]) {
-    driverStartDate.setHours(18);
-}
 console.log("%                                   %");
 console.log("%  Build Route For: " + buildingDate.toDateString() + " %");
-
-console.log("%    Delivery starts at " + driverStartDate.toLocaleTimeString() + "    %");
 console.log("%       Starting Route Builder      %");
-
-function createTestDataItem() {
-//TODO Delete this.
-    return [
-        {
-            _id: new ObjectId(),
-            city: "Garching bei München",
-            street: "",
-            houseNumber: "",
-            postalCode: "85748",
-
-        },
-        {
-            _id: new ObjectId(),
-            city: "München",
-            street: "Implerstraße",
-            houseNumber: "12A",
-            postalCode: "81371",
-
-        },
-        {
-            _id: new ObjectId(),
-            city: "München",
-            street: "Mies-van-der-Rohe-Straße",
-            houseNumber: "6d",
-            postalCode: "80807",
-
-        }
-    ];
-}
 
 /**
  *
@@ -58,7 +20,7 @@ function createTestDataItem() {
  *
  * 1. Load all Delivery Items for given Date TODO: The Date Retrieval still needs some adaption.
  * 2. Extract all Start Positions into one Array
- * 3. TODO Hand this Array to GoogleService -> Returns Distance Matrix for all Start Positions.
+ * 3. Hand this Array to GoogleService -> Returns Distance Matrix for all Start Positions.
  * 4. Use a hierarchical clustering algorithm to separate Start points into different Route
  * 5. For each Collection:
  *      5.1 Order Starts based on shorted distance -> Start Array
@@ -69,9 +31,9 @@ function createTestDataItem() {
  *      5.6 Order End points beginning with lowest value in Dist_Start-End -> Array of end Points
  *      5.7 Add array to Route.deliver
  *          5.7.1 Calculate ETA, Distance.
- *      5.8 TODO Route.vehicleType = VehicleTypeService.vehicleRecommendation(route)
- *      5.9 TODO mongodb.save(route)
- *      5.10 TODO All Items need to be marked as Routed (In Route Model AND in the DeliveryGOOD Model)
+ *      5.8 Route.vehicleType = VehicleTypeService.vehicleRecommendation(route)
+ *      5.9 mongodb.save(route)
+ *      5.10 All Items need to be marked as Waiting For Routing (In Route Model AND in the DeliveryGOOD Model)
  * END
  */
 
@@ -108,7 +70,7 @@ function createTestDataItem() {
             input: items,
             distance: distance,
             linkage: linkage,
-            minClusters: 2, // TODO: Calculate Minimum Clusters based on size of allStarts?
+            minClusters: items.length < 4 ? 0 : Math.floor(items.length / 4),
         });
         return mapLevelsToData(levels, items);
     }
@@ -140,29 +102,30 @@ function createTestDataItem() {
                 duration += retrieveTime(oldItem, item, distStruct, distanceMatrix);
                 totalDistance += retrieveDistance(oldItem, item, distStruct, distanceMatrix);
             }
-            console.log(duration)
         }
         return {sortedItems: sortedItems, duration: duration, totalDistance: totalDistance};
     }
 
     await mongoose.connect(config.mongoURI, {useNewUrlParser: true});
     const allItems = await model.deliveryGood.find().byDate(buildingDate);
-    console.log("%      found " + allItems.length + " items for routing   %");
-    /* TODO uncomment
-      const distanceMatrixStart = await GoogleService.getSquaredDistanceMatrix(allItems.map(
-          (item) => item.origination.toString()), 'driving'
-      );
-      console.log("Start");
-      log(distanceMatrixStart);
-      console.log("End");
-      const distanceMatrixEnd = await GoogleService.getSquaredDistanceMatrix(allItems.map(
-          (item) => item.destination.toString()), 'driving'
-      );
+    console.log("%      found " + allItems.length + " items for routing    %");
+    if (allItems.length > 12) {
+        throw "Too many Items defined for google Maps API! MAX allowed are 12 - IS: " + allItems.length;
+    } else if (allItems.length < 1) {
+        return;
+    }
 
-      log(distanceMatrixEnd);
-      */
-    const distanceMatrixStart = mock_google.mockstart;
-    const distanceMatrixEnd = mock_google.mockend;
+    const distanceMatrixStart = await GoogleService.getSquaredDistanceMatrix(allItems.map(
+        (item) => item.origination.toString()), 'driving'
+    );
+    const distanceMatrixEnd = await GoogleService.getSquaredDistanceMatrix(allItems.map(
+        (item) => item.destination.toString()), 'driving'
+    );
+
+    /* TODO Delete: Added for testing Purposes
+  const distanceMatrixStart = mock_google.mockstart;
+  const distanceMatrixEnd = mock_google.mockend;
+  */
     const distStartStruct = buildDistanceStruct(allItems, distanceMatrixStart);
     const distEndStruct = buildDistanceStruct(allItems, distanceMatrixEnd);
 
@@ -176,7 +139,10 @@ function createTestDataItem() {
         const route = new model.route(
             new model.route({
                 date: buildingDate,
-                items: deliveryItems,
+                items: deliveryItems.map((item) => {
+                    item.state = 'Waiting for Routing';
+                    return item
+                }),//TODO: .map((item) => item._id),
                 estimatedTime: sortResult.duration,
                 kilometers: sortResult.totalDistance,
                 collect: startAddresses
@@ -185,15 +151,11 @@ function createTestDataItem() {
     });
     console.log("%   First Endpoint is calculated    %");
 
-    /* TODO remove*/
+
     for (let i = 0; i < routes.length; i++) {
         let route = routes[i];
-        let distanceMatrixStartEnd = mock_google.start_to_end[i];
-    /* TODO Uncomment
-    for (let route of routes) {
         const distanceMatrixStartEnd = await GoogleService.getDistanceMatrix(route.collect[route.collect.length - 1].toString(),
-            route.items.map((item) => item.destination.toString()), 'driving'); */
-        log(distanceMatrixStartEnd);
+            route.items.map((item) => item.destination.toString()), 'driving');
         let firstEndpoint = distanceMatrixStartEnd.rows[0].elements.reduce(
             (total, entry, index) => total.currentDuration > entry.duration.value ? {
                 currentDuration: entry.duration.value,
@@ -207,17 +169,15 @@ function createTestDataItem() {
         route.estimatedTime += firstEndpoint.currentDuration + sortResult.duration;
         route.deliver = sortResult.sortedItems.map((item) => item.destination);
         route.vehicleType = vehicleRecommendation(route);
-        log(route);
-        console.log("%Successfully calculated collection %");
-
-
+        console.log("%        Endpoint " + i + " calculated      %");
+        await route.save();
     }
-
-    console.log("%     Endpoints are being sorted    %");
-
+    console.log("%     All Endpoints are sorted      %");
+    await model.deliveryGood.updateMany({_id: {$in: allItems.map(item => item._id)}}, {deliveryState: 'Waiting for Pickup'});
+    console.log("%       Updated Item's state        %")
 })()
     .then(() => {
-        console.log("% Succesfully executed RouteBuilder %");
+        console.log("%Successfully executed RouteBuilder %");
         process.exit(0);
     })
     .catch((err) => {
@@ -225,8 +185,3 @@ function createTestDataItem() {
         console.log(err);
         process.exit(-1);
     });
-
-// TODO Delete this
-function log(data) {
-    return console.log(util.inspect(data, false, null, true));
-}

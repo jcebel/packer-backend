@@ -13,7 +13,7 @@ const DeliveryGoodSchema = new mongoose.Schema({
 });
 
 DeliveryGoodSchema.query.byDate = function (date) {
-    return this.where({deliveryDate: date});
+    return this.where({deliveryDate: date, deliveryState: {$not: {$eq:"Waiting for Pickup"}}});
 };
 
 module.exports = mongoose.model('DeliveryGood', DeliveryGoodSchema);
