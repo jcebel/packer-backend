@@ -58,3 +58,5 @@ You may add optionally a specific date for the call. This creates a route with a
 ```bash
 npm run routing [<date in format YYYY-MM-DD>]
 ```
+
+**Hint:** The current mock data contains valid items for the specific date `2019-10-17T22:00:00.000+00:00`.
