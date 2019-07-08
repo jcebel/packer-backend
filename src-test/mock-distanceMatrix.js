@@ -225,7 +225,7 @@ const mockend = {
         }
     ],
     status: 'OK'
-}
+};
 
 
 const start_toEnd1 = {
