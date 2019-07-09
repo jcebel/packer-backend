@@ -1,7 +1,13 @@
 "use strict";
 
-const priceCalculation = (request, response) => {
+const priceCalculation = (req, res) => {
+    size = req.body.size;
+    weight = req.body.weight;
+    distance = req.body.distance;
+
+    
+
     res.status(200).json({price : 0});
 };
 
-module.exports = priceCalculation;
+module.exports = {priceCalculation};

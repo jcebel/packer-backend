@@ -5,7 +5,7 @@ const router   = express.Router();
 
 const PriceService = require('../services/priceCalculation.js');
 
-router.get('/', PriceService.priceCalculation);//get Price
+router.post('/', PriceService.priceCalculation);//get Price
 
 
 
