@@ -6,9 +6,9 @@ const helmet     = require('helmet');
 
 const middleware = require('./middleware');
 const deliveryGood = require('./routes/deliveryGood');
-const deliveryClient = require("./routes/deliveryClient");
 const route = require("./routes/route");
 const auth = require("./routes/auth");
+const user = require("./routes/user");
 const cors = require("cors");
 
 
@@ -29,8 +29,8 @@ api.get('/', (req, res) => {
 
 api.use('/auth', auth);
 api.use('/deliverygoods', deliveryGood);
-api.use('/deliveryclient', deliveryClient);
 api.use('/route', route);
+api.use('/user', user);
 
 
 module.exports = api;
