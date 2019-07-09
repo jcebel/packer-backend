@@ -19,7 +19,7 @@ const executeTest = function () {
         destination: {
             city: "Muenchen",
             street: "Theresienstrasse",
-            houseNumber: 5,
+            houseNumber: "5",
             postalCode: "84762"
         },
         origination: {
@@ -43,7 +43,7 @@ const executeTest = function () {
                 homeAddress: {
                     city: "Muenchen",
                     street: "Luitpoldstrasse",
-                    houseNumber: 1,
+                    houseNumber: "1",
                     postalCode: "81554"
                 }
             });
@@ -68,7 +68,7 @@ const executeTest = function () {
         destination: {
             city: "Muenchen",
             street: "Implerstraße",
-            houseNumber: 14,
+            houseNumber: "14",
             postalCode: "81371"
         },
         origination: {
@@ -92,7 +92,7 @@ const executeTest = function () {
                 homeAddress: {
                     city: "Muenchen",
                     street: "Moosacher Straße",
-                    houseNumber: 1,
+                    houseNumber: "1",
                     postalCode: "81554"
                 }
             });
@@ -118,7 +118,7 @@ const executeTest = function () {
             homeAddress: {
                 city: "Muenchen",
                 street: "Leopoldstrasse",
-                houseNumber: 1,
+                houseNumber: "1",
                 postalCode: "81371"
             }
         }).save();
@@ -141,7 +141,7 @@ const executeTest = function () {
                     homeAddress: {
                         city: "Muenchen",
                         street: "Implerstraße",
-                        houseNumber: 1,
+                        houseNumber: "1",
                         postalCode: "81371"
                     }
                 });
@@ -150,8 +150,8 @@ const executeTest = function () {
                     const route = new model.route({
                         date: new Date('2019-06-20'),
                         vehicleType: "car",
-                        kilometers: 10,
-                        estimatedArrivalTimes: [new Date('2019-06-20T02:48:00'), new Date('2019-06-20T03:24:00'), new Date('2019-06-20T06:06:00')],
+                        meters: 10,
+                        estimatedTime: 7200,
                         items: [dishwasher, bike],
                         auctionBids: [{
                             owner: driver._id,
@@ -234,13 +234,14 @@ const executeTest = function () {
         const presentItem = new model.deliveryGood({
             name: "Present",
             weight: "medium",
+            deliveryDate: new Date(2019, 9, 18),
             size: "medium",
             price: 10,
             deliveryState: "Routed",
             destination: {
                 city: "Muenchen",
                 street: "Fraunhoferstraße",
-                houseNumber: 12,
+                houseNumber: "12",
                 postalCode: "84762"
             },
             origination: {
@@ -253,13 +254,14 @@ const executeTest = function () {
         const ornament = new model.deliveryGood({
             name: "Ornament",
             weight: "light",
+            deliveryDate: new Date(2019, 9, 18),
             size: "small",
             price: 5,
             deliveryState: "Routed",
             destination: {
                 city: "Muenchen",
                 street: "Gärtnerplatz",
-                houseNumber: 2,
+                houseNumber: "2",
                 postalCode: "84762"
             },
             origination: {
@@ -272,12 +274,13 @@ const executeTest = function () {
         const books = new model.deliveryGood({
             name: "Books",
             weight: "medium",
+            deliveryDate: new Date(2019, 9, 18),
             size: "medium",
             price: 15,
             deliveryState: "Routed",
             destination: {
                 city: "Muenchen",
-                street: "Silberhornstra0e",
+                street: "Silberhornstraße",
                 houseNumber: 5,
                 postalCode: "84762"
             },
@@ -315,16 +318,16 @@ const executeTest = function () {
                     homeAddress: {
                         city: "Muenchen",
                         street: "Kolumbusplatz",
-                        houseNumber: 1,
+                        houseNumber: "1",
                         postalCode: "81371"
                     }
                 });
                 maxl.driver = driver2._id;
                 return maxl.save().then(function (maxl) {
                     const route = new model.route({
-                        kilometers: 20,
+                        meters: 20,
                         date: "2019-06-24",
-                        estimatedArrivalTimes: [new Date('2019-06-24T20:24:00'), new Date('2019-06-24T18:24:00')],
+                        estimatedTime: 7200,
                         items: [presentItem, books, ornament],
                         vehicleType: "bike",
                         auctionBids: [{
