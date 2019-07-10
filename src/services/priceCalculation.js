@@ -5,6 +5,8 @@ const priceCalculation = (req, res) => {
     weight = req.body.weight;
     distance = req.body.distance;
 
+    var price = 1;
+
     
 
     res.status(200).json({price : 0});
