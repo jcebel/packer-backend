@@ -12,6 +12,7 @@ const PointSchema = new mongoose.Schema({
     }
 });
 const AddressSchema = new mongoose.Schema({
+    name: String,
     city: String,
     street: String,
     houseNumber: String,
