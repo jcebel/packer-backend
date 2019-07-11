@@ -15,7 +15,7 @@ const executeTest = function () {
         weight: "heavy",
         size: "large",
         price: 28,
-        deliveryState: "Waiting for Routing",
+        deliveryState: "Delivered",
         destination: {
             city: "Muenchen",
             street: "Theresienstrasse",
@@ -34,7 +34,7 @@ const executeTest = function () {
         const dishwasherClient = new model.deliveryClient({});
         dishwasherClient.goodsToDeliver = delGood._id;
         dishwasherClient.save().then(function (client) {
-            const delClient = new model.user({
+            const user = new model.user({
                 email: "maxl",
                 password: "abc123",
                 firstName: "Max",
@@ -47,15 +47,14 @@ const executeTest = function () {
                     postalCode: "81554"
                 }
             });
-            delClient.deliveryClient = client._id;
-            return delClient.save();
+            user.deliveryClient = client._id;
+            return user.save();
         }).then(() => {
             model.deliveryClient.find().then((goods) => {
                 console.log(goods);
             }).catch(handleErr);
         }).catch(handleErr);
     }).catch(handleErr);
-
 
     //add deliveryGood
     const bike = new model.deliveryGood({
@@ -83,7 +82,7 @@ const executeTest = function () {
         const bikeClient = new model.deliveryClient({});
         bikeClient.goodsToDeliver = delGood._id;
         bikeClient.save().then(function (client) {
-            const delClient = new model.user({
+            const user = new model.user({
                 email: "jonasl",
                 password: "abc123",
                 firstName: "Jonas",
@@ -96,13 +95,63 @@ const executeTest = function () {
                     postalCode: "81554"
                 }
             });
-            delClient.deliveryClient = client._id;
-            return delClient.save();
+            user.deliveryClient = client._id;
+            return user.save();
         }).then(() => {
             model.deliveryClient.find().then((goods) => {
                 console.log(goods);
             }).catch(handleErr);
         }).catch(handleErr);
+    }).catch(handleErr);
+    const documents = new model.deliveryGood(
+        {
+            name: "Documents",
+            deliveryDate: new Date(2019, 6, 24),
+            weight: "heavy",
+            size: "large",
+            price: 30,
+            deliveryState: "In Delivery",
+            destination: {
+                city: "Muenchen",
+                street: "Implerstraße",
+                houseNumber: "14",
+                postalCode: "81371"
+            },
+            origination: {
+                city: "München",
+                street: "Odeonsplatz",
+                houseNumber: "28",
+                postalCode: "86361"
+            }
+        });
+    const chair = new model.deliveryGood(
+    {
+        name: "Chair",
+            deliveryDate: new Date(2019, 6, 24),
+        weight: "heavy",
+        size: "large",
+        price: 30,
+        deliveryState: "Waiting for Pickup",
+        destination: {
+        city: "Muenchen",
+            street: "Implerstraße",
+            houseNumber: "14",
+            postalCode: "81371"
+    },
+        origination: {
+            city: "München",
+                street: "Odeonsplatz",
+                houseNumber: "28",
+                postalCode: "86361"
+        }
+    });
+    const deliveryClient = new model.deliveryClient({});
+    documents.save().then(() => {
+        chair.save()
+            .then( () => {
+                deliveryClient.goodsToDeliver = [dishwasher._id, bike._id, chair._id, documents._id];
+                deliveryClient.save();
+            }).catch(handleErr);
     }).catch(handleErr);
 
     //other driver
