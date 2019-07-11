@@ -16,8 +16,13 @@ const create = (req, res) => {
         error: 'Bad Request',
         message: 'The request body is empty'
     });
-    
-    req.body.deliveryDate = new Date(Date.UTC(req.body.deliveryDate.getFullYear(),req.body.deliveryDate.getMonth(), req.body.deliveryDate.getDate()));
+
+
+    //console.log(req.body.deliveryDate);
+    const DateOld = new Date(req.body.deliveryDate);
+    const DateNew = new Date(Date.UTC(DateOld.getUTCFullYear(),DateOld.getUTCMonth(), DateOld.getUTCDate()));
+    req.body.deliveryDate = DateNew;
+    //req.body.deliveryDate = new Date(Date.UTC(req.body.deliveryDate.getFullYear(),req.body.deliveryDate.getMonth(), req.body.deliveryDate.getDate()));
     
     DeliveryGoodModel.create(req.body)
         .then(deliveryGood => {

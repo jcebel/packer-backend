@@ -24,7 +24,7 @@ const priceCalculation = (req, res) => {
     if(distance <= 8 ) {
         price = price + (distance * 0.15);
     } else if(distance > 8 && distance <= 16) {
-        price = price + (distance * 0.15);
+        price = price + (distance * 0.15);  
     } else if (distance > 16) {
         price = price + (distance * 0.15);
     }
