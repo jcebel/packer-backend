@@ -1,11 +1,11 @@
 "use strict";
 
 const priceCalculation = (req, res) => {
-    size = req.body.size;
-    weight = req.body.weight;
-    distance = req.body.distance;
+    const size = req.body.size;
+    const weight = req.body.weight;
+    const distance = req.body.distance;
 
-    var price = 1;
+    let price = 1;
 
     if(size == "Small") {
         price = price + 1;
