@@ -8,9 +8,10 @@ const handleErr = function (err) {
 
 const executeGoogleTest = function () {
 
-    GoogleService(['48.264490, 11.671101', '48.122323, 11.548530', '48.176506, 11.593093'], 'driving')
+    GoogleService.getDistanceMatrix(["Aidenbachstraße 94, München"], ["Boltzmannstraße 5, München"], 'driving')
         .then((data) => {
-            console.log(data);
+            console.log(data.rows[0].elements[0].distance.value);
+            console.log(data.rows[0].elements);
         }).catch((e) => {
             console.log(e);
     });
