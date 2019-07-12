@@ -202,6 +202,7 @@ const executeTest = function () {
                         meters: 10,
                         estimatedTime: 7200,
                         items: [dishwasher, bike],
+                        currentBid:3,
                         auctionBids: [{
                             owner: driver._id,
                             bid: 4,
@@ -379,6 +380,7 @@ const executeTest = function () {
                         estimatedTime: 7200,
                         items: [presentItem, books, ornament],
                         vehicleType: "bike",
+                        currentBid: 23,
                         auctionBids: [{
                             owner: driver2._id,
                             bid: 30,
