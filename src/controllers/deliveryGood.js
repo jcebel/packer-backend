@@ -26,10 +26,10 @@ const create = (req, res) => {
             delGoodId = deliveryGood._id;
         })
         .then(() => {
-            UserModel.findById("5d28c928ae02f13a9894255f").select("deliveryClient").exec()
+            UserModel.findById("5d28d44dd4483422c89a8963").select("deliveryClient").exec()
                 .then(client => {
                     console.log("Client: " + client);
-                    console.log("Client id: " + client._id);
+                    
                     DeliveyClientModel.findById(client.deliveryClient).exec()
                         .then((deliveryClient) => {
                             deliveryClient.goodsToDeliver.push(delGoodId);
