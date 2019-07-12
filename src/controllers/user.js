@@ -19,7 +19,22 @@ const listDeliveryGoods = (req, res) => {
             message: error.message
         }));
 };
+const isDriver = (req, res) => {
+const isDriver = (req, res) => {
+    UserModel.findById(req.userId).exec().then( user => {
+            if(user && user.driver) {
+                res.status(200).json({isDriver:true});
+            } else  {
+                res.status(200).json({isDriver:false});
+            }
+        }
+    ).catch(error => res.status(500).json({
+        error: 'Internal Server Error',
+        message: error.message
+    }));
+};
 
 module.exports = {
-    listDeliveryGoods
+    listDeliveryGoods,
+    isDriver
 };
