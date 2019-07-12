@@ -3,6 +3,7 @@ const deliveryGood = require('./DeliveryGood');
 const Address = require('./AddressSchema').AddressSchema;
 
 const RouteSchema = new mongoose.Schema({
+    currentBid: Number,
     date: Date,
     vehicleType: String,
     meters: Number,

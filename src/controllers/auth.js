@@ -4,6 +4,13 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const config = require('../config');
 const UserModel = require('../models/User');
+const DeliveryClientModel = require('../models/DeliveryClient');
+const DriverModel = require('../models/Driver');
+
+const internalServerError = (error, res) => res.status(500).json({
+    error: 'Internal server error',
+    message: error.message
+});
 
 const register = (req,res) => {
     if (!Object.prototype.hasOwnProperty.call(req.body, 'password')) return res.status(400).json({
@@ -16,21 +23,51 @@ const register = (req,res) => {
         message: 'The request body must contain an email property'
     });
 
+    let delClient;
+    let driver;
+    for(let i=0; i<req.body.checkboxIds.length; i++){
+        if(req.body.checkboxIds[i] === "deliveryClient"){
+            delClient = new DeliveryClientModel();
+            req.body.deliveryClient = delClient._id;
+        }
+        else if(req.body.checkboxIds[i] === "driver"){
+            driver = new DriverModel();
+            req.body.driver = driver._id;
+        }
+    }
+
+    delete req.body.checkboxIds;
     const user = Object.assign(req.body, {password: bcrypt.hashSync(req.body.password, 8)});
 
+    if (typeof delClient !== "undefined" && typeof driver === "undefined") {
+        delClient.save().then(() => {
+            createUserModel(user, res);
+        }).catch(error => internalServerError(error,res))
+    }
+    else if (typeof delClient === "undefined" && typeof driver !== "undefined"){
+        driver.save().then(() => {
+            createUserModel(user, res);
+        }).catch(error => internalServerError(error,res))
+    }
+    else if (typeof delClient !== "undefined" && typeof driver !== "undefined"){
+        delClient.save().then(() => {
+            driver.save().then(() => {
+                createUserModel(user, res)
+            }).catch(error => internalServerError(error,res))
+        }).catch(error => internalServerError(error,res))
+    }
+};
 
+const createUserModel = (user, res) => {
     UserModel.create(user)
         .then(user => {
             const token = jwt.sign({ id: user._id, email: user.email }, config.JwtSecret, {
                 expiresIn: 86400 // expires in 24 hours
             });
-
             res.status(200).json({token: token});
-
-
         })
         .catch(error => {
-            if(error.code == 11000) {
+            if(error.code === 11000) {
                 res.status(400).json({
                     error: 'User exists',
                     message: error.message
@@ -44,7 +81,6 @@ const register = (req,res) => {
             }
         });
 };
-
 
 const login = (req,res) => {
     if (!Object.prototype.hasOwnProperty.call(req.body, 'password')) return res.status(400).json({

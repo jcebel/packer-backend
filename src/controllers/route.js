@@ -8,13 +8,13 @@ const internalServerError = (error, res) => res.status(500).json({
 const list = (req, res) => {
     RouteModel.find({}).exec()
         .then(routes => res.status(200).json(routes))
-        .catch(error => internalServerError(error,res));
+        .catch(error => internalServerError(error, res));
 };
 
 const listByDate = (req, res) => {
     RouteModel.find().byDate(req.params["date"]).exec()
-        .then(routes=> res.status(200).json(routes))
-        .catch(error => internalServerError(error,res));
+        .then(routes => res.status(200).json(routes))
+        .catch(error => internalServerError(error, res));
 };
 
 const read = (req, res) => {
@@ -29,7 +29,7 @@ const read = (req, res) => {
             res.status(200).json(route)
 
         })
-        .catch(error => internalServerError(error,res));
+        .catch(error => internalServerError(error, res));
 
 };
 
@@ -50,7 +50,7 @@ const update = (req, res) => {
             res.status(200).json(route);
             console.log(req.body);
         })
-        .catch((error) => internalServerError(error,res));
+        .catch((error) => internalServerError(error, res));
 };
 const updateBid = (req, res) => {
     if (Object.keys(req.body).length === 0) {
@@ -60,17 +60,19 @@ const updateBid = (req, res) => {
         });
     }
     RouteModel.findByIdAndUpdate(req.params.id, {
-        $push: {auctionBids: {
+        $push: {
+            auctionBids: {
                 "owner": req.body.owner,
                 "bid": req.body.bid,
                 "timestamp": new Date()
             }
-        }
-    },{new: true, runValidators: true}).exec()
+        },
+        currentBid: req.body.bid
+    }, {new: true, runValidators: true}).exec()
         .then(route => {
             res.status(200).json(route);
         })
-        .catch((error) => internalServerError(error,res));
+        .catch((error) => internalServerError(error, res));
 };
 
 
