@@ -17,27 +17,32 @@ const create = (req, res) => {
         message: 'The request body is empty'
     });
 
-
-    //console.log(req.body.deliveryDate);
-    const DateOld = new Date(req.body.deliveryDate);
-    const DateNew = new Date(Date.UTC(DateOld.getUTCFullYear(),DateOld.getUTCMonth(), DateOld.getUTCDate()));
-    req.body.deliveryDate = DateNew;
-    //req.body.deliveryDate = new Date(Date.UTC(req.body.deliveryDate.getFullYear(),req.body.deliveryDate.getMonth(), req.body.deliveryDate.getDate()));
-
-
-    
-
-    
+    let delGoodId;
     DeliveryGoodModel.create(req.body)
         .then(deliveryGood => {
             res.status(201).json(deliveryGood);
             console.log("Added successfully:");
-            console.log(deliveryGood);
+            console.log("DelGood Id: " + deliveryGood._id);
+            delGoodId = deliveryGood._id;
+        })
+        .then(() => {
+            UserModel.findById("5d28c928ae02f13a9894255f").select("deliveryClient").exec()
+                .then(client => {
+                    console.log("Client: " + client);
+                    console.log("Client id: " + client._id);
+                    DeliveyClientModel.findById(client.deliveryClient).exec()
+                        .then((deliveryClient) => {
+                            deliveryClient.goodsToDeliver.push(delGoodId);
+                            deliveryClient.save();
+                        })
+                });
         })
         .catch(error => res.status(500).json({
             error: 'Internal server error',
             message: error.message
         }));
+
+
 };
 
 const read   = (req, res) => {
