@@ -20,8 +20,18 @@ const listDeliveryGoods = (req, res) => {
         }));
 };
 
+const getDriverID = (req, res) => {
+    UserModel.findById(req.userId).exec().then( user => {
+            res.status(200).json(user.driver);
+        }).catch(error => res.status(500).json({
+        error: 'Internal Server Error',
+        message: error.message
+    }));
+};
+
 
 
 module.exports = {
-    listDeliveryGoods
+    listDeliveryGoods,
+    getDriverID
 };
