@@ -3,6 +3,7 @@
 const DeliveryGoodModel = require('../models/DeliveryGood');
 const DriverModel = require('../models/Driver');
 const RouteModel = require('../models/Route');
+const UserModel = require('../models/User');
 
 const internalServerError = (error, res) => res.status(500).json({
     error: 'Internal server error',
@@ -49,14 +50,19 @@ const readDeliveryDetails = (req, res) => {
                 .then(route => {
                     DriverModel.find().byRouteId(route[0]._id)
                         .select("driverLicenseNumber").exec()
-                        .then( driver => {
-                                let deliveryDetails = {};
-                                deliveryDetails.deliveryGood = deliveryGood;
-                                deliveryDetails.driverLicenseNumber = driver[0].driverLicenseNumber;
-                                deliveryDetails.vehicleType = route[0].vehicleType;
-                                res.status(200).json(deliveryDetails)
-                            }
-                        ).catch(error => internalServerError(error, res));
+                        .then(driver => {
+                            //console.log(driver[0]._id)
+                            UserModel.find({driver: driver[0]._id})
+                                .select("firstName")
+                                .then(user => {
+                                    let deliveryDetails = {};
+                                    deliveryDetails.deliveryGood = deliveryGood;
+                                    deliveryDetails.vehicleType = route[0].vehicleType;
+                                    deliveryDetails.driverLicenseNumber = driver[0].driverLicenseNumber;
+                                    deliveryDetails.driverName = user[0].firstName;
+                                    res.status(200).json(deliveryDetails)
+                                }).catch(error => internalServerError(error, res));
+                        }).catch(error => internalServerError(error, res));
                 }).catch(error => internalServerError(error, res));
         }).catch(error => internalServerError(error, res));
 };
