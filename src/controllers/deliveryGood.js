@@ -36,39 +36,29 @@ const create = (req, res) => {
         }));
 };
 
-const read = (req, res) => {
+const readDeliveryDetails = (req, res) => {
     DeliveryGoodModel.findById(req.params.id).exec()
         .then(deliveryGood => {
             if (!deliveryGood) return res.status(404).json({
                 error: 'Not Found',
                 message: `Delivery good not found`
             });
-
             //add Driver and Route Details
-            RouteModel.find().byDelGoodId("5d286e9fae02f13a98938018").exec()
+            RouteModel.find().byDelGoodId(req.params.id)
+                .select("vehicleType").exec()
                 .then(route => {
-                    DriverModel.find().byRouteId(route[0]._id).exec()
-                        .then( driver =>
-                            {
-                                // console.log(driver[0].vehicle);
-                                // console.log(deliveryGood);
+                    DriverModel.find().byRouteId(route[0]._id)
+                        .select("driverLicenseNumber").exec()
+                        .then( driver => {
                                 let deliveryDetails = {};
                                 deliveryDetails.deliveryGood = deliveryGood;
                                 deliveryDetails.driverLicenseNumber = driver[0].driverLicenseNumber;
-                                // deliveryDetails.driver.vehicle = driver[0].vehicle;
-                                deliveryDetails.route = route;
-                                console.log(deliveryDetails);
+                                deliveryDetails.vehicleType = route[0].vehicleType;
                                 res.status(200).json(deliveryDetails)
                             }
-                        )
-                        .catch(error => internalServerError(error, res));
-                });
-
-        })
-        .catch(error => res.status(500).json({
-            error: 'Internal Server Error',
-            message: error.message
-        }));
+                        ).catch(error => internalServerError(error, res));
+                }).catch(error => internalServerError(error, res));
+        }).catch(error => internalServerError(error, res));
 };
 
 const update = (req, res) => {
@@ -79,20 +69,6 @@ const update = (req, res) => {
             message: 'The request body is empty'
         });
     }
-
-//TODO: find out, if it is better to use updateOne or findByIdAndUpdate
-
-/*    DeliveryGoodModel.updateOne(
-        {_id: req.params.id},
-        {$set: req.body}
-    ).exec()
-        .then(deliveryGood => {
-            res.status(200).json(deliveryGood);
-        })
-        .catch(error => res.status(500).json({
-            error: 'Internal server error',
-            message: error.message
-        }));*/
 
     DeliveryGoodModel.findByIdAndUpdate(req.params.id,req.body,
         {
@@ -120,7 +96,7 @@ const remove = (req, res) => {
 module.exports = {
     list,
     create,
-    read,
+    readDeliveryDetails,
     update,
     remove
 };

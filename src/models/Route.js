@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Address = require('./AddressSchema').AddressSchema;
+const deliveryGood = require('./DeliveryGood');
 
 const RouteSchema = new mongoose.Schema({
     currentBid: Number,
@@ -7,7 +8,7 @@ const RouteSchema = new mongoose.Schema({
     vehicleType: String,
     meters: Number,
     estimatedTime: Number,
-    items: [{type: mongoose.SchemaTypes.ObjectId, ref: "DeliveryGood"}],
+    items: [deliveryGood.schema],
     auctionBids: [{
         owner:{type:mongoose.SchemaTypes.ObjectId, ref:"Driver"},
         bid:Number,
@@ -22,8 +23,7 @@ RouteSchema.query.byDate = function (date) {
 };
 
 RouteSchema.query.byDelGoodId = function (id) {
-    // console.log(this.where({routesToDrive: id}));
-    return this.where({items: id});
+    return this.where({"items._id": {$in: [id]}});
 };
 
 module.exports = mongoose.model('Route', RouteSchema);
