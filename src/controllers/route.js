@@ -1,6 +1,10 @@
 "use strict";
 
 const RouteModel = require('../models/Route');
+const UserModel = require('../models/User');
+const mongoose = require('mongoose');
+
+
 const internalServerError = (error, res) => res.status(500).json({
     error: 'Internal server error',
     message: error.message
@@ -59,20 +63,27 @@ const updateBid = (req, res) => {
             message: 'The request body is empty'
         });
     }
-    RouteModel.findByIdAndUpdate(req.params.id, {
-        $push: {
-            auctionBids: {
-                "owner": req.body.owner,
-                "bid": req.body.bid,
-                "timestamp": new Date()
-            }
-        },
-        currentBid: req.body.bid
-    }, {new: true, runValidators: true}).exec()
-        .then(route => {
-            res.status(200).json(route);
-        })
-        .catch((error) => internalServerError(error, res));
+    UserModel.findById(req.userId).exec().then( user => {
+        let driverID = user.driver;
+        RouteModel.findByIdAndUpdate(req.params.id, {
+            $push: {
+                auctionBids: {
+                    "owner": mongoose.Types.ObjectId(driverID),
+                    "bid": req.body.bid,
+                    "timestamp": new Date()
+                }
+            },
+            currentBid: req.body.bid
+        }).exec()
+            .then(route => {
+                res.status(200).json(route);
+            })
+            .catch((error) => internalServerError(error, res));
+        }
+    ).catch(error => res.status(500).json({
+        error: 'Internal Server Error',
+        message: error.message
+    }));
 };
 
 
