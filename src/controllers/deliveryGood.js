@@ -51,12 +51,11 @@ const readDeliveryDetails = (req, res) => {
                     DriverModel.find().byRouteId(route[0]._id)
                         .select("driverLicenseNumber").exec()
                         .then(driver => {
-                            //console.log(driver[0]._id)
                             UserModel.find({driver: driver[0]._id})
                                 .select("firstName")
                                 .then(user => {
                                     let deliveryDetails = {};
-                                    deliveryDetails.deliveryGood = deliveryGood;
+                                    deliveryDetails.deliverygood = deliveryGood;
                                     deliveryDetails.vehicleType = route[0].vehicleType;
                                     deliveryDetails.driverLicenseNumber = driver[0].driverLicenseNumber;
                                     deliveryDetails.driverName = user[0].firstName;

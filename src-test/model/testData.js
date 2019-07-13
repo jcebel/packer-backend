@@ -17,16 +17,18 @@ const executeTest = function () {
         price: 28,
         deliveryState: "Delivered",
         destination: {
+            name: "Jon Doe",
             city: "Muenchen",
             street: "Theresienstrasse",
             houseNumber: "5",
-            postalCode: "84762"
+            postalCode: "80333"
         },
         origination: {
+            name: "Peter Maffay",
             city: "München",
             street: "Arcisstrasse",
             houseNumber: "28",
-            postalCode: "86361"
+            postalCode: "80333"
         }
     });
     dishwasher.save().then(function (delGood) {
@@ -65,12 +67,14 @@ const executeTest = function () {
         price: 30,
         deliveryState: "Waiting for Routing",
         destination: {
+            name: "Lady Gaga",
             city: "Muenchen",
             street: "Implerstraße",
             houseNumber: "14",
             postalCode: "81371"
         },
         origination: {
+            name: "Christiano Ronaldo",
             city: "München",
             street: "Odeonsplatz",
             houseNumber: "28",
@@ -112,12 +116,14 @@ const executeTest = function () {
             price: 30,
             deliveryState: "In Delivery",
             destination: {
+                name: "Biene Maja",
                 city: "Muenchen",
                 street: "Implerstraße",
                 houseNumber: "14",
                 postalCode: "81371"
             },
             origination: {
+                name: "Fritzi",
                 city: "München",
                 street: "Odeonsplatz",
                 houseNumber: "28",
