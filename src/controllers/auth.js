@@ -103,7 +103,7 @@ const login = (req, res) => {
 };
 
 const user = (req, res) => {
-    UserModel.findById(req.userId).select('email').exec()
+    UserModel.findById(req.userId).exec()
         .then(user => {
 
             if (!user) return res.status(404).json({
@@ -111,9 +111,16 @@ const user = (req, res) => {
                 message: `User not found`
             });
 
-            res.status(200).json(user)
+            res.status(200).json({
+                name: user.name,
+                firstName: user.firstName,
+                email: user.email,
+                birthday: user.birthday,
+                driver: !!user.driver,
+                deliveryClient: !!user.deliveryClient
+            })
         })
-        .catch((err) => internalServerError(err,res));
+        .catch((err) => internalServerError(err, res));
 };
 
 const logout = (req, res) => {
