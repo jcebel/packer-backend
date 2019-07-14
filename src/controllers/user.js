@@ -1,6 +1,7 @@
 "use strict";
 
 const UserModel = require('../models/User');
+const ErrorHandler = require('./ErrorHandler');
 
 const listDeliveryGoods = (req, res) => {
     UserModel.findById(req.params.id)
@@ -14,15 +15,22 @@ const listDeliveryGoods = (req, res) => {
             });
             res.status(200).json(delGoods.deliveryClient.goodsToDeliver)
         })
-        .catch(error => res.status(500).json({
-            error: 'Internal Server Error',
-            message: error.message
-        }));
+        .catch(error => ErrorHandler.internalServerError(error,res));
+};
+const isDriver = (req, res) => {
+    UserModel.findById(req.userId).exec().then( user => {
+            if(user && user.driver) {
+                res.status(200).json({isDriver:true});
+            } else  {
+                res.status(200).json({isDriver:false});
+            }
+        }
+    ).catch(error => ErrorHandler.internalServerError(error,res));
 };
 
 const getDriverID = (req, res) => {
     UserModel.findById(req.userId).exec().then( user => {
-            res.status(200).json(user.driver);
+        res.status(200).json(user.driver);
         }).catch(error => res.status(500).json({
         error: 'Internal Server Error',
         message: error.message
@@ -33,5 +41,6 @@ const getDriverID = (req, res) => {
 
 module.exports = {
     listDeliveryGoods,
+    isDriver,
     getDriverID
 };
