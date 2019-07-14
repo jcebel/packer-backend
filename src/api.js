@@ -9,6 +9,7 @@ const deliveryGood = require('./routes/deliveryGood');
 const route = require("./routes/route");
 const auth = require("./routes/auth");
 const user = require("./routes/user");
+const price = require("./routes/price");
 const cors = require("cors");
 
 
@@ -31,6 +32,7 @@ api.use('/auth', auth);
 api.use('/deliverygoods', deliveryGood);
 api.use('/route', route);
 api.use('/user', user);
+api.use('/price', price);
 
 
 module.exports = api;
