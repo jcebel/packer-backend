@@ -20,7 +20,8 @@ const priceCalculation = (req, res) => {
         if(price > 30) {
             price = 30;
         }
-        res.status(200).json({price : price}); //return price;
+        res.status(200).json({price : price,
+                            distance: distance}); //return price;
     }).catch((e) => {
         console.log(e);
     });
