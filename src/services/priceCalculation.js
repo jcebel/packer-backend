@@ -1,16 +1,7 @@
 "use strict";
 const GoogleService  = require("./GoogleService");
 
-
-
-
-
-
 const priceCalculation = (req, res) => {
-
-
-    
-
 
     const size = req.body.size;
     const weight = req.body.weight;
@@ -21,15 +12,11 @@ const priceCalculation = (req, res) => {
 
     GoogleService.getDistanceMatrix([orig], [dest], 'driving')
     .then((data) => {
-        //console.log(data.rows[0].elements[0].distance.value);
-        //console.log(data.rows[0].elements);
         distance = data.rows[0].elements[0].distance.value;
         distance = distance / 1000;
         price = price + (distance * 0.15);
         price = Math.round( price * 10) / 10;
-        //console.log(distance);
-        //console.log(price);
-
+    
         if(price >= 30) {
             price = 30;
         }
@@ -39,9 +26,6 @@ const priceCalculation = (req, res) => {
         console.log(e);
     });
     
-
-    
-
     if(size == "Small") {
         price = price + 1;
     } else if(size == "Medium") {
@@ -56,11 +40,6 @@ const priceCalculation = (req, res) => {
     } else if (weight == "Heavy") {
         price = price + 5;
     }
-    
-    //console.log(distance);
-    
-
-   
 };
 
 module.exports = {priceCalculation};
