@@ -28,8 +28,6 @@ const create = (req, res) => {
     DeliveryGoodModel.create(req.body)
         .then(deliveryGood => {
             res.status(201).json(deliveryGood);
-            console.log("Added successfully:");
-            console.log(deliveryGood);
         })
         .catch(error => res.status(500).json({
             error: 'Internal server error',
@@ -66,6 +64,19 @@ const readDeliveryDetails = (req, res) => {
         }).catch(error => internalServerError(error, res));
 };
 
+const readDeliveryState = (req, res) => {
+    DeliveryGoodModel.findById(req.params.id)
+        .select('deliveryState')
+        .exec()
+        .then(deliveryState => {
+            if (!deliveryState) return res.status(404).json({
+                error: 'Not Found',
+                message: `Delivery good not found`
+            });
+            res.status(200).json(deliveryState);
+        }).catch(error => internalServerError(error, res));
+};
+
 const update = (req, res) => {
     if (Object.keys(req.body).length === 0)
     {
@@ -81,7 +92,6 @@ const update = (req, res) => {
             runValidators: true}).exec()
         .then(deliveryGood => {
             res.status(200).json(deliveryGood);
-            console.log(req.body);
         })
         .catch(error => res.status(500).json({
             error: 'Internal server error',
@@ -102,6 +112,7 @@ module.exports = {
     list,
     create,
     readDeliveryDetails,
+    readDeliveryState,
     update,
     remove
 };
