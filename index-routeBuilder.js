@@ -9,7 +9,8 @@ const vehicleRecommendation = require('./src/services/vehicleTypeService');
 
 console.log("%       Starting Route Builder      %");
 
-const buildingDate = process.argv[2] ? new Date(process.argv[2]) : new Date(new Date().toDateString());
+const buildingDate = process.argv[2] ? new Date(process.argv[2]) : new Date(
+    new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate(), 0, 0, 0, 0);
 console.log("%                                   %");
 console.log("%  Build Route For: " + buildingDate.toDateString() + " %");
 console.log("%       Starting Route Builder      %");
@@ -18,7 +19,7 @@ console.log("%       Starting Route Builder      %");
  *
  * Pseudo Code:
  *
- * 1. Load all Delivery Items for given Date TODO: The Date Retrieval still needs some adaption.
+ * 1. Load all Delivery Items for given Date
  * 2. Extract all Start Positions into one Array
  * 3. Hand this Array to GoogleService -> Returns Distance Matrix for all Start Positions.
  * 4. Use a hierarchical clustering algorithm to separate Start points into different Route
@@ -121,11 +122,6 @@ console.log("%       Starting Route Builder      %");
     const distanceMatrixEnd = await GoogleService.getSquaredDistanceMatrix(allItems.map(
         (item) => item.destination.toString()), 'driving'
     );
-
-    /* TODO Delete: Added for testing Purposes
-  const distanceMatrixStart = mock_google.mockstart;
-  const distanceMatrixEnd = mock_google.mockend;
-  */
     const distStartStruct = buildDistanceStruct(allItems, distanceMatrixStart);
     const distEndStruct = buildDistanceStruct(allItems, distanceMatrixEnd);
 
@@ -142,7 +138,7 @@ console.log("%       Starting Route Builder      %");
                 items: deliveryItems.map((item) => {
                     item.state = 'Waiting for Routing';
                     return item
-                }),//TODO: .map((item) => item._id),
+                }),
                 estimatedTime: sortResult.duration,
                 kilometers: sortResult.totalDistance,
                 collect: startAddresses
