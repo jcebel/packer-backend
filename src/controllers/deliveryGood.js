@@ -1,6 +1,8 @@
 "use strict";
 
 const DeliveryGoodModel = require('../models/DeliveryGood');
+const UserModel = require('../models/User');
+const DeliveryClientModel = require('../models/DeliveryClient');
 
 const list  = (req, res) => {
     DeliveryGoodModel.find({}).exec()
@@ -17,11 +19,21 @@ const create = (req, res) => {
         message: 'The request body is empty'
     });
 
+    let delGoodId;
     DeliveryGoodModel.create(req.body)
         .then(deliveryGood => {
             res.status(201).json(deliveryGood);
-            console.log("Added successfully:");
-            console.log(deliveryGood);
+            delGoodId = deliveryGood._id;
+        })
+        .then(() => {
+            UserModel.findById(req.userId).select("deliveryClient").exec()
+                .then(client => {
+                    DeliveryClientModel.findById(client.deliveryClient).exec()
+                        .then((deliveryClient) => {
+                            deliveryClient.goodsToDeliver.push(delGoodId);
+                            deliveryClient.save();
+                        })
+                })
         })
         .catch(error => res.status(500).json({
             error: 'Internal server error',

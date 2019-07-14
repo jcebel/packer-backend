@@ -7,6 +7,7 @@ const DeliveryGoodSchema = new mongoose.Schema({
     weight: String, //small, medium, large
     size: String,   //light, medium, heavy
     price: Number,
+    distance: Number,
     deliveryState: String,
     destination: Address,
     origination: Address
