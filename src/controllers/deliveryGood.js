@@ -19,13 +19,14 @@ const create = (req, res) => {
         message: 'The request body is empty'
     });
 
-    //let delGoodId;
+    let delGoodId;
     DeliveryGoodModel.create(req.body)
         .then(deliveryGood => {
             res.status(201).json(deliveryGood);
+            delGoodId = deliveryGood._id;
             console.log("Added successfully:");
             console.log("DelGood Id: " + deliveryGood._id);
-        })/*
+        })
         .then(() => {
             UserModel.findById(req.userId).select("deliveryClient").exec()
                 .then(client => {
@@ -37,7 +38,7 @@ const create = (req, res) => {
                             deliveryClient.save();
                         })
                 })
-        })*/
+        })
         .catch(error => res.status(500).json({
             error: 'Internal server error',
             message: error.message
