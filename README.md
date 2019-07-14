@@ -60,3 +60,18 @@ npm run routing [<date in format YYYY-MM-DD>]
 ```
 
 **Hint:** The current mock data contains valid items for the specific date `2019-10-17T22:00:00.000+00:00`.
+
+
+**Auction Finish Process**
+
+This triggers the auction finish based on the existing delivergoods of the routes which were calcualted for today. This 
+methods is executed after the route builder.
+
+You may add optionally a specific date for the call. This sets the deliveryState of each DeliveryGood of todays routes 
+to "Waiting for Pickup" and the auctionOver variable of each route of today to "true".
+
+```bash
+npm run finish [<date in format YYYY-MM-DD>]
+```
+
+**Hint:** The current mock data contains valid items for the specific date `"2019-06-24"`.

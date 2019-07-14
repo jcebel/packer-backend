@@ -17,6 +17,7 @@
     "test": "node ./index.js test",
     "start": "node ./index.js",
     "routing": "node ./index-routeBuilder.js",
+    "finish": "node ./index-auctionFinisher.js",
     "devstart": "nodemon ./index.js"
   },
   "dependencies": {

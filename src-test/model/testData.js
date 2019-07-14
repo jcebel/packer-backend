@@ -203,7 +203,7 @@ const executeTest = function () {
                         estimatedTime: 7200,
                         items: [dishwasher, bike],
                         currentBid:3,
-                        auctionOver: true,
+                        auctionOver: false,
                         auctionBids: [{
                             owner: driver._id,
                             bid: 4,
