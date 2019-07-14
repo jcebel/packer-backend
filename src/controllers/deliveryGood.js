@@ -24,13 +24,13 @@ const create = (req, res) => {
         .then(deliveryGood => {
             res.status(201).json(deliveryGood);
             delGoodId = deliveryGood._id;
-            console.log("Added successfully:");
-            console.log("DelGood Id: " + deliveryGood._id);
+            //console.log("Added successfully:");
+            //console.log("DelGood Id: " + deliveryGood._id);
         })
         .then(() => {
             UserModel.findById(req.userId).select("deliveryClient").exec()
                 .then(client => {
-                    console.log("Client: " + client);
+                   // console.log("Client: " + client);
                     
                     DeliveryClientModel.findById(client.deliveryClient).exec()
                         .then((deliveryClient) => {
