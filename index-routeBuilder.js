@@ -136,12 +136,13 @@ console.log("%       Starting Route Builder      %");
             new model.route({
                 date: buildingDate,
                 items: deliveryItems.map((item) => {
-                    item.state = 'Waiting for Routing';
+                    item.state = 'In Bidding Process';
                     return item
                 }),
                 estimatedTime: sortResult.duration,
-                kilometers: sortResult.totalDistance,
-                collect: startAddresses
+                meters: sortResult.totalDistance,
+                collect: startAddresses,
+                auctionOver:false
             }));
         return route;
     });
@@ -169,7 +170,7 @@ console.log("%       Starting Route Builder      %");
         await route.save();
     }
     console.log("%     All Endpoints are sorted      %");
-    await model.deliveryGood.updateMany({_id: {$in: allItems.map(item => item._id)}}, {deliveryState: 'Waiting for Pickup'});
+    await model.deliveryGood.updateMany({_id: {$in: allItems.map(item => item._id)}}, {deliveryState: 'In Bidding Process'});
     console.log("%       Updated Item's state        %")
 })()
     .then(() => {
