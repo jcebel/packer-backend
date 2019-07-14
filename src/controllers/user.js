@@ -20,7 +20,6 @@ const listDeliveryGoods = (req, res) => {
         }));
 };
 const isDriver = (req, res) => {
-const isDriver = (req, res) => {
     UserModel.findById(req.userId).exec().then( user => {
             if(user && user.driver) {
                 res.status(200).json({isDriver:true});
