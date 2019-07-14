@@ -17,7 +17,7 @@ const priceCalculation = (req, res) => {
         price = price + (distance * 0.15);
         price = Math.round( price * 10) / 10;
     
-        if(price >= 30) {
+        if(price > 30) {
             price = 30;
         }
         res.status(200).json({price : price}); //return distance;
