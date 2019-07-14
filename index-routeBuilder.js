@@ -4,13 +4,12 @@ const config = require('./src/config.js');
 const model = require('./src/models/dataModel');
 const cluster = require('hierarchical-clustering');
 const GoogleService = require('./src/services/GoogleService');
-const mock_google = require('./src-test/mock-distanceMatrix');
 const vehicleRecommendation = require('./src/services/vehicleTypeService');
 
 console.log("%       Starting Route Builder      %");
 
 const buildingDate = process.argv[2] ? new Date(process.argv[2]) : new Date(
-    new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate(), 0, 0, 0, 0);
+    new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getDate(), 12, 0, 0, 0);
 console.log("%                                   %");
 console.log("%  Build Route For: " + buildingDate.toDateString() + " %");
 console.log("%       Starting Route Builder      %");
@@ -34,7 +33,7 @@ console.log("%       Starting Route Builder      %");
  *          5.7.1 Calculate ETA, Distance.
  *      5.8 Route.vehicleType = VehicleTypeService.vehicleRecommendation(route)
  *      5.9 mongodb.save(route)
- *      5.10 All Items need to be marked as Waiting For Routing (In Route Model AND in the DeliveryGOOD Model)
+ *      5.10 All Items need to be marked as in bidding process (In Route Model AND in the DeliveryGOOD Model)
  * END
  */
 
@@ -93,7 +92,7 @@ console.log("%       Starting Route Builder      %");
             distStruct[item._id].alreadyVisited = true;
             sortedItems.push(oldItem);
             item = items.reduce((total, otherItem) => {
-                if (item._id != otherItem && !distStruct[otherItem._id].alreadyVisited) {
+                if (item._id !== otherItem && !distStruct[otherItem._id].alreadyVisited) {
                     let distance = retrieveTime(item, otherItem, distStruct, distanceMatrix);
                     return distance < total.dist ? {item: otherItem, dist: distance} : total;
                 }
@@ -132,19 +131,17 @@ console.log("%       Starting Route Builder      %");
         const sortResult = sortItemsByDistance(
             deliveryItems, distanceMatrixStart, distStartStruct);
         const startAddresses = sortResult.sortedItems.map((item) => item.origination);
-        const route = new model.route(
-            new model.route({
-                date: buildingDate,
-                items: deliveryItems.map((item) => {
-                    item.state = 'In Bidding Process';
-                    return item
-                }),
-                estimatedTime: sortResult.duration,
-                meters: sortResult.totalDistance,
-                collect: startAddresses,
-                auctionOver:false
-            }));
-        return route;
+        return new model.route({
+            date: buildingDate,
+            items: deliveryItems.map((item) => {
+                item.state = 'In Bidding Process';
+                return item
+            }),
+            estimatedTime: sortResult.duration,
+            meters: sortResult.totalDistance,
+            collect: startAddresses,
+            auctionOver: false
+        });
     });
     console.log("%   First Endpoint is calculated    %");
 
@@ -166,6 +163,10 @@ console.log("%       Starting Route Builder      %");
         route.estimatedTime += firstEndpoint.currentDuration + sortResult.duration;
         route.deliver = sortResult.sortedItems.map((item) => item.destination);
         route.vehicleType = vehicleRecommendation(route);
+
+
+        route.currentBid = Math.round(route.items.reduce((previousValue, item) => previousValue + (item.price * 1.1), 0));
+        console.log("%      Route starts with: " + Math.round(route.currentBid) + " €      %");
         console.log("%        Endpoint " + i + " calculated      %");
         await route.save();
     }
