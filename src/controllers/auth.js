@@ -150,7 +150,7 @@ const updateType = (req, res) => {
                 })
         })
         .then(() => {
-            res.status(200).send();
+            res.status(200).send({});
         })
         .catch((err) => internalServerError(err, res));
 
