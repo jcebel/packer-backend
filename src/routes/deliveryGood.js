@@ -5,7 +5,7 @@ const router   = express.Router();
 const middleware = require('../middleware');
 const DeliveryGoodController = require('../controllers/deliveryGood');
 
-router.get('/', DeliveryGoodController.list);//List all delivery goods
+router.get('/', middleware.checkAuthentication, DeliveryGoodController.list);//List all delivery goods
 router.post('/', DeliveryGoodController.create);//Add delivery good
 router.get('/:id', middleware.checkAuthentication, DeliveryGoodController.readDeliveryDetails);//Search for delivery details by id
 router.get('/:id/deliverystate', middleware.checkAuthentication, DeliveryGoodController.readDeliveryState);

@@ -10,11 +10,20 @@ const internalServerError = (error, res) => res.status(500).json({
     message: error.message
 });
 
-const list  = (req, res) => {
-    DeliveryGoodModel.find({}).exec()
-        .then(deliverygoods => res.status(200).json(deliverygoods))
+const list = (req, res) => {
+    UserModel.findById(req.userId)
+        .populate({path: 'deliveryClient', populate: {path: 'goodsToDeliver'}})
+        .select('goodsToDeliver')
+        .exec()
+        .then(user => {
+            if (!user) return res.status(404).json({
+                error: 'Not Found',
+                message: `User not found`
+            });
+            res.status(200).json(user.deliveryClient.goodsToDeliver)
+        })
         .catch(error => res.status(500).json({
-            error: 'Internal server error',
+            error: 'Internal Server Error',
             message: error.message
         }));
 };
