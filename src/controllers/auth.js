@@ -123,6 +123,39 @@ const user = (req, res) => {
         .catch((err) => internalServerError(err, res));
 };
 
+const updateType = (req, res) => {
+    UserModel.findById(req.userId)
+        .then((user) => {
+            const deliveryClient = req.body.deliveryClient && !user.deliveryClient ? new DeliveryClientModel() : undefined;
+            const driver = req.body.driver && !user.driver ? new DriverModel() : undefined;
+            const update = {};
+            if (deliveryClient) {
+                update.deliveryClient = deliveryClient._id;
+            }
+            if (driver) {
+                update.driver = driver._id;
+            }
+
+            return UserModel.findByIdAndUpdate(req.userId, update)
+                .then(() => {
+                    if (driver) {
+                        return driver.save();
+                    }
+                })
+                .then(() => {
+                    if(deliveryClient) {
+                        deliveryClient.deliveryGood = [];
+                        return deliveryClient.save();
+                    }
+                })
+        })
+        .then(() => {
+            res.status(200).send();
+        })
+        .catch((err) => internalServerError(err, res));
+
+};
+
 const logout = (req, res) => {
     res.status(200).send({token: null});
 };
@@ -132,5 +165,6 @@ module.exports = {
     register,
     login,
     user,
-    logout
+    logout,
+    updateType
 };
