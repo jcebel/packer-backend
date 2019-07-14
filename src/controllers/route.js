@@ -1,10 +1,8 @@
 "use strict";
 
 const RouteModel = require('../models/Route');
-const internalServerError = (error, res) => res.status(500).json({
-    error: 'Internal server error',
-    message: error.message
-});
+const internalServerError = require('./ErrorHandler').internalServerError;
+
 const list = (req, res) => {
     RouteModel.find({}).exec()
         .then(routes => res.status(200).json(routes))

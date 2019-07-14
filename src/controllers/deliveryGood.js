@@ -1,14 +1,10 @@
 "use strict";
-
-const DeliveryGoodModel = require('../models/DeliveryGood');
+const ErrorHandler = require('./ErrorHandler');
 
 const list  = (req, res) => {
     DeliveryGoodModel.find({}).exec()
         .then(deliverygoods => res.status(200).json(deliverygoods))
-        .catch(error => res.status(500).json({
-            error: 'Internal server error',
-            message: error.message
-        }));
+        .catch(error => ErrorHandler.internalServerError(error,res));
 };
 
 const create = (req, res) => {
@@ -23,10 +19,7 @@ const create = (req, res) => {
             console.log("Added successfully:");
             console.log(deliveryGood);
         })
-        .catch(error => res.status(500).json({
-            error: 'Internal server error',
-            message: error.message
-        }));
+        .catch(error => ErrorHandler.internalServerError(error,res));
 };
 
 const read   = (req, res) => {
@@ -41,10 +34,7 @@ const read   = (req, res) => {
             res.status(200).json(deliveryGood)
 
         })
-        .catch(error => res.status(500).json({
-            error: 'Internal Server Error',
-            message: error.message
-        }));
+        .catch(error => ErrorHandler.internalServerError(error,res));
 
 };
 
@@ -79,19 +69,13 @@ const update = (req, res) => {
             res.status(200).json(deliveryGood);
             console.log(req.body);
         })
-        .catch(error => res.status(500).json({
-            error: 'Internal server error',
-            message: error.message
-        }));
+        .catch(error => ErrorHandler.internalServerError(error,res));
 };
 
 const remove = (req, res) => {
     DeliveryGoodModel.findByIdAndRemove(req.params.id).exec()
         .then(() => res.status(200).json({message: `Delivery good with id${req.params.id} was deleted`}))
-        .catch(error => res.status(500).json({
-            error: 'Internal server error',
-            message: error.message
-        }));
+        .catch(error =>ErrorHandler.internalServerError(error,res));
 };
 
 module.exports = {

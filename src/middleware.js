@@ -1,14 +1,14 @@
 "use strict";
 
-const jwt    = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 
-const config = require ('./config');
+const config = require('./config');
 
 const checkAuthentication = (req, res, next) => {
 
     // check header or url parameters or post parameters for token
     let token = "";
-    if(req.headers.authorization) {
+    if (req.headers.authorization) {
         token = req.headers.authorization;
     }
 
@@ -20,10 +20,13 @@ const checkAuthentication = (req, res, next) => {
 
     // verifies secret and checks exp
     jwt.verify(token, config.JwtSecret, (err, decoded) => {
-        if (err) return res.status(401).send({
-            error: 'Unauthorized',
-            message: 'Failed to authenticate token.'
-        });
+        if (err) {
+            console.log(new Date(), err)
+            return res.status(401).send({
+                error: 'Unauthorized',
+                message: 'Failed to authenticate token.'
+            });
+        }
 
         // if everything is good, save to request for use in other routes
         req.userId = decoded.id;
@@ -34,11 +37,12 @@ const checkAuthentication = (req, res, next) => {
 };
 
 const errorHandler = (err, req, res, next) => {
+    console.log(new Date(), err);
     if (res.headersSent) {
         return next(err)
     }
     res.status(500);
-    res.render('error', { error: err })
+    res.render('error', {error: err})
 };
 
 
