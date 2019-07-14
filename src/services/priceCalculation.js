@@ -29,6 +29,10 @@ const priceCalculation = (req, res) => {
         price = Math.round( price * 10) / 10;
         //console.log(distance);
         //console.log(price);
+
+        if(price >= 30) {
+            price = 30;
+        }
         res.status(200).json({price : price});
         //return distance;
     }).catch((e) => {
@@ -43,14 +47,14 @@ const priceCalculation = (req, res) => {
     } else if(size == "Medium") {
         price = price + 2;
     } else if(size == "Large") {
-        price = price + 3;
+        price = price + 5;
     }
     if(weight == "Light") {
         price = price + 1;
     } else if(weight == "Medium") {
         price = price + 2;
     } else if (weight == "Heavy") {
-        price = price + 3;
+        price = price + 5;
     }
     
     //console.log(distance);
