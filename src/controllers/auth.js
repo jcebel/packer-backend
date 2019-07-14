@@ -94,7 +94,7 @@ const login = (req, res) => {
 
             res.status(200).json({token: token});
 
-        })//TODO is 404 a correct message code?
+        })
         .catch(error => res.status(404).json({
             error: 'User Not Found',
             message: error.message
