@@ -67,11 +67,11 @@ const readDeliveryDetails = (req, res) => {
                             UserModel.find({driver: driver[0]._id})
                                 .select("firstName")
                                 .then(user => {
-                                    let deliveryDetails = {};
-                                    deliveryDetails.deliverygood = deliveryGood;
-                                    deliveryDetails.vehicleType = route[0].vehicleType;
-                                    deliveryDetails.driverLicenseNumber = driver[0].driverLicenseNumber;
-                                    deliveryDetails.driverName = user[0].firstName;
+                                    let deliveryDetails = {
+                                        deliverygood: deliveryGood,
+                                        vehicleType: route[0].vehicleType,
+                                        driverName: user[0].firstName
+                                    };
                                     res.status(200).json(deliveryDetails)
                                 }).catch(error => ErrorHandler.internalServerError(error,res));
                         }).catch(error => ErrorHandler.internalServerError(error,res));
