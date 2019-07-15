@@ -157,7 +157,6 @@ const executeTest = function () {
         }
     });
     const deliveryClient = new model.deliveryClient({});
-    // const routeLV = new model.route({});
     const driverLV = new model.driver({});
     const userDriverLV = new model.user({});
     documents.save().then(() => {
