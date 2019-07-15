@@ -157,7 +157,7 @@ const executeTest = function () {
         }
     });
     const deliveryClient = new model.deliveryClient({});
-    const routeLV = new model.route({});
+    // const routeLV = new model.route({});
     const driverLV = new model.driver({});
     const userDriverLV = new model.user({});
     documents.save().then(() => {
@@ -165,8 +165,80 @@ const executeTest = function () {
             .then( () => {
                 deliveryClient.goodsToDeliver = [dishwasher._id, bike._id, chair._id, documents._id];
                 deliveryClient.save();
-                routeLV.items = [dishwasher, bike, chair, documents];
-                routeLV.vehicleType = "Car";
+                const routeLV = new model.route({
+                    date: new Date('2019-06-20'),
+                    vehicleType: "car",
+                    meters: 10,
+                    estimatedTime: 7200,
+                    currentBid:3,
+                    auctionOver: false,
+                    auctionBids: [{
+                        owner: driverLV._id,
+                        bid: 4,
+                        timestamp: new Date('2019-06-19T03:24:00')
+                    }, {
+                        owner: driverLV._id,
+                        bid: 3,
+                        timestamp: new Date('2019-06-19T04:24:00')
+                    }],
+                    collect: [{
+                        city: "München",
+                        street: "Fröttmaninger Straße",
+                        houseNumber: 18,
+                        postalCode: "80805",
+                        location: {
+                            type: 'Point',
+                            coordinates:[48.125891, 11.595632]
+                        }
+                    }, {
+                        city: "München",
+                        street: "Grasmeierstraße ",
+                        houseNumber: 10,
+                        postalCode: "80805",
+                        location: {
+                            type: 'Point',
+                            coordinates:[48.125891, 11.595632]
+                        }
+                    }, {
+                        city: "München",
+                        street: "Ungererstraße",
+                        houseNumber: 28,
+                        postalCode: "86361",
+                        location: {
+                            type: 'Point',
+                            coordinates:[48.125891, 11.595632]
+                        }
+                    }],
+                    deliver: [ {
+                        city: "Muenchen",
+                        street: "Max-Bill-Straße",
+                        houseNumber: 7,
+                        postalCode: "80807",
+                        location: {
+                            type: 'Point',
+                            coordinates:[48.125891, 11.595632]
+                        }
+                    }, {
+                        city: "Muenchen",
+                        street: "Marianne-Brandt-Straße",
+                        houseNumber: 22,
+                        postalCode: "80807",
+                        location: {
+                            type: 'Point',
+                            coordinates:[48.125891, 11.595632]
+                        }
+                    }, {
+                        city: "München",
+                        street: "Heinrich-Kley-Straße",
+                        houseNumber: 12,
+                        postalCode: "80807",
+                        location: {
+                            type: 'Point',
+                            coordinates:[48.125891, 11.595632]
+                        }
+                    }],
+                    items: [dishwasher, bike, chair, documents],
+                });
                 routeLV.save()
                     .then(() => {
                         driverLV.routesToDrive = [routeLV._id];
