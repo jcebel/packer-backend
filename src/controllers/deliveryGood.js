@@ -17,12 +17,14 @@ const list = (req, res) => {
                 error: 'Not Found',
                 message: `User not found`
             });
-            res.status(200).json(user.deliveryClient.goodsToDeliver)
-        })
-        .catch(error => res.status(500).json({
-            error: 'Internal Server Error',
-            message: error.message
-        }));
+            let delgoodArray=user.deliveryClient.goodsToDeliver;
+            delgoodArray.sort(function(a, b) {
+                a = new Date(a.deliveryDate);
+                b = new Date(b.deliveryDate);
+                return a>b ? -1 : a<b ? 1 : 0;
+            });
+            res.status(200).json(delgoodArray)
+        }).catch(error => ErrorHandler.internalServerError(error,res));
 };
 
 const create = (req, res) => {
@@ -46,8 +48,7 @@ const create = (req, res) => {
                             deliveryClient.save();
                         })
                 })
-        })
-        .catch(error => ErrorHandler.internalServerError(error,res));
+        }).catch(error => ErrorHandler.internalServerError(error,res));
 };
 
 const readDeliveryDetails = (req, res) => {
