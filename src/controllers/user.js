@@ -17,16 +17,6 @@ const listDeliveryGoods = (req, res) => {
         })
         .catch(error => ErrorHandler.internalServerError(error,res));
 };
-const isDriver = (req, res) => {
-    UserModel.findById(req.userId).exec().then( user => {
-            if(user && user.driver) {
-                res.status(200).json({isDriver:true});
-            } else  {
-                res.status(200).json({isDriver:false});
-            }
-        }
-    ).catch(error => ErrorHandler.internalServerError(error,res));
-};
 
 const getDriverID = (req, res) => {
     UserModel.findById(req.userId).exec().then( user => {
@@ -41,6 +31,5 @@ const getDriverID = (req, res) => {
 
 module.exports = {
     listDeliveryGoods,
-    isDriver,
     getDriverID
 };
