@@ -15,7 +15,8 @@ const RouteSchema = new mongoose.Schema({
         timestamp: Date
     }],
     collect:[Address],
-    deliver:[Address]
+    deliver:[Address],
+    auctionOver: Boolean
 });
 
 RouteSchema.query.byDate = function (date) {

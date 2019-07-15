@@ -6,13 +6,9 @@ const config = require('../config');
 const UserModel = require('../models/User');
 const DeliveryClientModel = require('../models/DeliveryClient');
 const DriverModel = require('../models/Driver');
+const internalServerError = require('./ErrorHandler').internalServerError;
 
-const internalServerError = (error, res) => res.status(500).json({
-    error: 'Internal server error',
-    message: error.message
-});
-
-const register = (req,res) => {
+const register = (req, res) => {
     if (!Object.prototype.hasOwnProperty.call(req.body, 'password')) return res.status(400).json({
         error: 'Bad Request',
         message: 'The request body must contain a password property'
@@ -25,12 +21,11 @@ const register = (req,res) => {
 
     let delClient;
     let driver;
-    for(let i=0; i<req.body.checkboxIds.length; i++){
-        if(req.body.checkboxIds[i] === "deliveryClient"){
+    for (let i = 0; i < req.body.checkboxIds.length; i++) {
+        if (req.body.checkboxIds[i] === "deliveryClient") {
             delClient = new DeliveryClientModel();
             req.body.deliveryClient = delClient._id;
-        }
-        else if(req.body.checkboxIds[i] === "driver"){
+        } else if (req.body.checkboxIds[i] === "driver") {
             driver = new DriverModel();
             req.body.driver = driver._id;
         }
@@ -42,47 +37,41 @@ const register = (req,res) => {
     if (typeof delClient !== "undefined" && typeof driver === "undefined") {
         delClient.save().then(() => {
             createUserModel(user, res);
-        }).catch(error => internalServerError(error,res))
-    }
-    else if (typeof delClient === "undefined" && typeof driver !== "undefined"){
+        }).catch(error => internalServerError(error, res))
+    } else if (typeof delClient === "undefined" && typeof driver !== "undefined") {
         driver.save().then(() => {
             createUserModel(user, res);
-        }).catch(error => internalServerError(error,res))
-    }
-    else if (typeof delClient !== "undefined" && typeof driver !== "undefined"){
+        }).catch(error => internalServerError(error, res))
+    } else if (typeof delClient !== "undefined" && typeof driver !== "undefined") {
         delClient.save().then(() => {
             driver.save().then(() => {
                 createUserModel(user, res)
-            }).catch(error => internalServerError(error,res))
-        }).catch(error => internalServerError(error,res))
+            }).catch(error => internalServerError(error, res))
+        }).catch(error => internalServerError(error, res))
     }
 };
 
 const createUserModel = (user, res) => {
     UserModel.create(user)
         .then(user => {
-            const token = jwt.sign({ id: user._id, email: user.email }, config.JwtSecret, {
+            const token = jwt.sign({id: user._id, email: user.email}, config.JwtSecret, {
                 expiresIn: 86400 // expires in 24 hours
             });
             res.status(200).json({token: token});
         })
         .catch(error => {
-            if(error.code === 11000) {
+            if (error.code === 11000) {
                 res.status(400).json({
                     error: 'User exists',
                     message: error.message
                 })
-            }
-            else{
-                res.status(500).json({
-                    error: 'Internal server error',
-                    message: error.message
-                })
+            } else {
+                internalServerError(error, res);
             }
         });
 };
 
-const login = (req,res) => {
+const login = (req, res) => {
     if (!Object.prototype.hasOwnProperty.call(req.body, 'password')) return res.status(400).json({
         error: 'Bad Request',
         message: 'The request body must contain a password property'
@@ -97,9 +86,9 @@ const login = (req,res) => {
         .then(user => {
 
             const isPasswordValid = bcrypt.compareSync(req.body.password, user.password);
-            if (!isPasswordValid) return res.status(401).send({token: null });
+            if (!isPasswordValid) return res.status(401).send({token: null});
 
-            const token = jwt.sign({ id: user._id, email: user.email }, config.JwtSecret, {
+            const token = jwt.sign({id: user._id, email: user.email}, config.JwtSecret, {
                 expiresIn: 86400 // expires in 24 hours
             });
 
@@ -114,7 +103,7 @@ const login = (req,res) => {
 };
 
 const user = (req, res) => {
-    UserModel.findById(req.userId).select('email').exec()
+    UserModel.findById(req.userId).exec()
         .then(user => {
 
             if (!user) return res.status(404).json({
@@ -122,16 +111,53 @@ const user = (req, res) => {
                 message: `User not found`
             });
 
-            res.status(200).json(user)
+            res.status(200).json({
+                name: user.name,
+                firstName: user.firstName,
+                email: user.email,
+                birthday: user.birthday,
+                driver: !!user.driver,
+                deliveryClient: !!user.deliveryClient
+            })
         })
-        .catch(error => res.status(500).json({
-            error: 'Internal Server Error',
-            message: error.message
-        }));
+        .catch((err) => internalServerError(err, res));
+};
+
+const updateType = (req, res) => {
+    UserModel.findById(req.userId)
+        .then((user) => {
+            const deliveryClient = req.body.deliveryClient && !user.deliveryClient ? new DeliveryClientModel() : undefined;
+            const driver = req.body.driver && !user.driver ? new DriverModel() : undefined;
+            const update = {};
+            if (deliveryClient) {
+                update.deliveryClient = deliveryClient._id;
+            }
+            if (driver) {
+                update.driver = driver._id;
+            }
+
+            return UserModel.findByIdAndUpdate(req.userId, update)
+                .then(() => {
+                    if (driver) {
+                        return driver.save();
+                    }
+                })
+                .then(() => {
+                    if(deliveryClient) {
+                        deliveryClient.deliveryGood = [];
+                        return deliveryClient.save();
+                    }
+                })
+        })
+        .then(() => {
+            res.status(200).send({});
+        })
+        .catch((err) => internalServerError(err, res));
+
 };
 
 const logout = (req, res) => {
-    res.status(200).send({ token: null });
+    res.status(200).send({token: null});
 };
 
 
@@ -139,5 +165,6 @@ module.exports = {
     register,
     login,
     user,
-    logout
+    logout,
+    updateType
 };
