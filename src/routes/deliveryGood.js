@@ -3,15 +3,11 @@
 const express  = require('express');
 const middleware = require('../middleware');
 const router   = express.Router();
-
 const DeliveryGoodController = require('../controllers/deliveryGood');
-const middleware    = require('../middleware');
 
-router.get('/', DeliveryGoodController.list);//List all delivery goods //TODO: Delete
-router.post('/', middleware.checkAuthentication, DeliveryGoodController.create);//Add delivery good
-router.get('/:id', DeliveryGoodController.read);//Search for delivery good by id // TODO: Delete
-router.put('/:id', DeliveryGoodController.update);//Update existing document //TODO: Delete
-router.patch('/:id', DeliveryGoodController.update);//Update existing document TODO: Delete
-router.delete('/:id',DeliveryGoodController.remove);//Delete document from db
+router.get('/', middleware.checkAuthentication, DeliveryGoodController.list);
+router.post('/', middleware.checkAuthentication, DeliveryGoodController.create);
+router.get('/:id', middleware.checkAuthentication, DeliveryGoodController.read);
+router.delete('/:id',middleware.checkAuthentication, DeliveryGoodController.remove);
 
 module.exports = router;
