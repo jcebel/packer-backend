@@ -6,10 +6,6 @@ const RouteModel = require('../models/Route');
 const UserModel = require('../models/User');
 const DeliveryClientModel = require('../models/DeliveryClient');
 
-const internalServerError = (error, res) => res.status(500).json({
-    error: 'Internal server error',
-    message: error.message
-});
 
 const list = (req, res) => {
     UserModel.findById(req.userId)
@@ -77,10 +73,10 @@ const readDeliveryDetails = (req, res) => {
                                     deliveryDetails.driverLicenseNumber = driver[0].driverLicenseNumber;
                                     deliveryDetails.driverName = user[0].firstName;
                                     res.status(200).json(deliveryDetails)
-                                }).catch(error => internalServerError(error, res));
-                        }).catch(error => internalServerError(error, res));
-                }).catch(error => internalServerError(error, res));
-        }).catch(error => internalServerError(error, res));
+                                }).catch(error => ErrorHandler.internalServerError(error,res));
+                        }).catch(error => ErrorHandler.internalServerError(error,res));
+                }).catch(error => ErrorHandler.internalServerError(error,res));
+        }).catch(error => ErrorHandler.internalServerError(error,res));
 };
 
 const readDeliveryState = (req, res) => {
@@ -93,7 +89,7 @@ const readDeliveryState = (req, res) => {
                 message: `Delivery good not found`
             });
             res.status(200).json(deliveryState);
-        }).catch(error => internalServerError(error, res));
+        }).catch(error => ErrorHandler.internalServerError(error,res));
 };
 
 const update = (req, res) => {

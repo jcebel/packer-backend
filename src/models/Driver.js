@@ -8,7 +8,6 @@ const DriverSchema = new mongoose.Schema({
 });
 
 DriverSchema.query.byRouteId = function (id) {
-    // console.log(this.where({routesToDrive: id}));
     return this.where({routesToDrive: id});
 };
 
