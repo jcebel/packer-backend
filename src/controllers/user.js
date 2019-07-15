@@ -4,7 +4,7 @@ const UserModel = require('../models/User');
 const ErrorHandler = require('./ErrorHandler');
 
 const listDeliveryGoods = (req, res) => {
-    UserModel.findById(req.params.id)
+    UserModel.findById(req.userId)
         .populate({path: 'deliveryClient', populate: {path: 'goodsToDeliver'}})
         .select('goodsToDeliver')
         .exec()
