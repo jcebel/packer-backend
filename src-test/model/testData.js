@@ -15,18 +15,21 @@ const executeTest = function () {
         weight: "heavy",
         size: "large",
         price: 28,
+        distance: 16,
         deliveryState: "Delivered",
         destination: {
+            name: "Jon Doe",
             city: "Muenchen",
             street: "Theresienstrasse",
             houseNumber: "5",
-            postalCode: "84762"
+            postalCode: "80333"
         },
         origination: {
+            name: "Peter Maffay",
             city: "München",
             street: "Arcisstrasse",
             houseNumber: "28",
-            postalCode: "86361"
+            postalCode: "80333"
         }
     });
     dishwasher.save().then(function (delGood) {
@@ -35,7 +38,7 @@ const executeTest = function () {
         dishwasherClient.goodsToDeliver = delGood._id;
         dishwasherClient.save().then(function (client) {
             const user = new model.user({
-                email: "maxl",
+                email: "maxl@w.de",
                 password: "abc123",
                 firstName: "Max",
                 name: "Mustermann",
@@ -63,18 +66,21 @@ const executeTest = function () {
         weight: "heavy",
         size: "large",
         price: 30,
+        distance: 13,
         deliveryState: "Waiting for Routing",
         destination: {
+            name: "Lady Gaga",
             city: "Muenchen",
-            street: "Implerstraße",
-            houseNumber: "14",
-            postalCode: "81371"
+            street: "Baaderstraße",
+            houseNumber: "68",
+            postalCode: "80469"
         },
         origination: {
+            name: "Christiano Ronaldo",
             city: "München",
-            street: "Odeonsplatz",
-            houseNumber: "28",
-            postalCode: "86361"
+            street: "Grünwalder Straße",
+            houseNumber: "10",
+            postalCode: "81547"
         }
     });
     bike.save().then(function (delGood) {
@@ -110,47 +116,70 @@ const executeTest = function () {
             weight: "heavy",
             size: "large",
             price: 30,
+            distance: 5,
             deliveryState: "In Delivery",
             destination: {
+                name: "Biene Maja",
                 city: "Muenchen",
-                street: "Implerstraße",
-                houseNumber: "14",
-                postalCode: "81371"
+                street: "Bodenseestraße",
+                houseNumber: "40",
+                postalCode: "81243"
             },
             origination: {
+                name: "Fritzi",
                 city: "München",
-                street: "Odeonsplatz",
-                houseNumber: "28",
-                postalCode: "86361"
+                street: "Radspielerstraße",
+                houseNumber: "13",
+                postalCode: "81927"
             }
         });
     const chair = new model.deliveryGood(
     {
         name: "Chair",
-            deliveryDate: new Date(2019, 6, 24),
+        deliveryDate: new Date(2019, 6, 24),
         weight: "heavy",
         size: "large",
         price: 30,
         deliveryState: "Waiting for Pickup",
         destination: {
-        city: "Muenchen",
-            street: "Implerstraße",
-            houseNumber: "14",
-            postalCode: "81371"
+            name: "Jürgen Drews",
+            city: "Muenchen",
+            street: "Allacher Straße",
+            houseNumber: "265",
+            postalCode: "80997"
     },
         origination: {
-            city: "München",
-                street: "Odeonsplatz",
-                houseNumber: "28",
-                postalCode: "86361"
+                name: "Lionel Messi",
+                city: "München",
+                street: "Jestelstraße",
+                houseNumber: "10",
+                postalCode: "80999"
         }
     });
     const deliveryClient = new model.deliveryClient({});
+    const routeLV = new model.route({});
+    const driverLV = new model.driver({});
+    const userDriverLV = new model.user({});
     documents.save().then(() => {
         chair.save()
             .then( () => {
                 deliveryClient.goodsToDeliver = [dishwasher._id, bike._id, chair._id, documents._id];
                 deliveryClient.save();
+                routeLV.items = [dishwasher, bike, chair, documents];
+                routeLV.vehicleType = "Car";
+                routeLV.save()
+                    .then(() => {
+                        driverLV.routesToDrive = [routeLV._id];
+                        driverLV.driverLicenseNumber = "LVTest";
+                        driverLV.save()
+                            .then(() => {
+                                userDriverLV.email= "LVTest@d.de";
+                                userDriverLV.password ="testpwd";
+                                userDriverLV.firstName = "LVDriver";
+                                userDriverLV.driver = driverLV._id;
+                                userDriverLV.save();
+                            });
+                    }).catch(handleErr);
             }).catch(handleErr);
     }).catch(handleErr);
 

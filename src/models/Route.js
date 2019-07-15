@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-const deliveryGood = require('./DeliveryGood');
 const Address = require('./AddressSchema').AddressSchema;
+const deliveryGood = require('./DeliveryGood');
 
 const RouteSchema = new mongoose.Schema({
     currentBid: Number,
@@ -21,6 +21,10 @@ const RouteSchema = new mongoose.Schema({
 
 RouteSchema.query.byDate = function (date) {
     return this.where({date: date});
+};
+
+RouteSchema.query.byDelGoodId = function (id) {
+    return this.where({"items._id": {$in: [id]}});
 };
 
 module.exports = mongoose.model('Route', RouteSchema);

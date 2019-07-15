@@ -7,4 +7,8 @@ const DriverSchema = new mongoose.Schema({
     routesToDrive: [{type: mongoose.SchemaTypes.ObjectId, ref: "Route"}]
 });
 
+DriverSchema.query.byRouteId = function (id) {
+    return this.where({routesToDrive: id});
+};
+
 module.exports = mongoose.model('Driver', DriverSchema);

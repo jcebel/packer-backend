@@ -1,13 +1,30 @@
 "use strict";
 const ErrorHandler = require('./ErrorHandler');
 const DeliveryGoodModel = require('../models/DeliveryGood');
+const DriverModel = require('../models/Driver');
+const RouteModel = require('../models/Route');
 const UserModel = require('../models/User');
 const DeliveryClientModel = require('../models/DeliveryClient');
 
-const list  = (req, res) => {
-    DeliveryGoodModel.find({}).exec()
-        .then(deliverygoods => res.status(200).json(deliverygoods))
-        .catch(error => ErrorHandler.internalServerError(error,res));
+
+const list = (req, res) => {
+    UserModel.findById(req.userId)
+        .populate({path: 'deliveryClient', populate: {path: 'goodsToDeliver'}})
+        .select('goodsToDeliver')
+        .exec()
+        .then(user => {
+            if (!user) return res.status(404).json({
+                error: 'Not Found',
+                message: `User not found`
+            });
+            let delgoodArray=user.deliveryClient.goodsToDeliver;
+            delgoodArray.sort(function(a, b) {
+                a = new Date(a.deliveryDate);
+                b = new Date(b.deliveryDate);
+                return a>b ? -1 : a<b ? 1 : 0;
+            });
+            res.status(200).json(delgoodArray)
+        }).catch(error => ErrorHandler.internalServerError(error,res));
 };
 
 const create = (req, res) => {
@@ -31,24 +48,49 @@ const create = (req, res) => {
                             deliveryClient.save();
                         })
                 })
-        })
-        .catch(error => ErrorHandler.internalServerError(error,res));
+        }).catch(error => ErrorHandler.internalServerError(error,res));
 };
 
-const read   = (req, res) => {
+const readDeliveryDetails = (req, res) => {
     DeliveryGoodModel.findById(req.params.id).exec()
         .then(deliveryGood => {
-
             if (!deliveryGood) return res.status(404).json({
                 error: 'Not Found',
                 message: `Delivery good not found`
             });
+            //add Driver and Route Details
+            RouteModel.find().byDelGoodId(req.params.id)
+                .select("vehicleType").exec()
+                .then(route => {
+                    DriverModel.find().byRouteId(route[0]._id)
+                        .select("driverLicenseNumber").exec()
+                        .then(driver => {
+                            UserModel.find({driver: driver[0]._id})
+                                .select("firstName")
+                                .then(user => {
+                                    let deliveryDetails = {
+                                        deliverygood: deliveryGood,
+                                        vehicleType: route[0].vehicleType,
+                                        driverName: user[0].firstName
+                                    };
+                                    res.status(200).json(deliveryDetails)
+                                }).catch(error => ErrorHandler.internalServerError(error,res));
+                        }).catch(error => ErrorHandler.internalServerError(error,res));
+                }).catch(error => ErrorHandler.internalServerError(error,res));
+        }).catch(error => ErrorHandler.internalServerError(error,res));
+};
 
-            res.status(200).json(deliveryGood)
-
-        })
-        .catch(error => ErrorHandler.internalServerError(error,res));
-
+const readDeliveryState = (req, res) => {
+    DeliveryGoodModel.findById(req.params.id)
+        .select('deliveryState')
+        .exec()
+        .then(deliveryState => {
+            if (!deliveryState) return res.status(404).json({
+                error: 'Not Found',
+                message: `Delivery good not found`
+            });
+            res.status(200).json(deliveryState);
+        }).catch(error => ErrorHandler.internalServerError(error,res));
 };
 
 const update = (req, res) => {
@@ -60,27 +102,12 @@ const update = (req, res) => {
         });
     }
 
-//TODO: find out, if it is better to use updateOne or findByIdAndUpdate
-
-/*    DeliveryGoodModel.updateOne(
-        {_id: req.params.id},
-        {$set: req.body}
-    ).exec()
-        .then(deliveryGood => {
-            res.status(200).json(deliveryGood);
-        })
-        .catch(error => res.status(500).json({
-            error: 'Internal server error',
-            message: error.message
-        }));*/
-
     DeliveryGoodModel.findByIdAndUpdate(req.params.id,req.body,
         {
             new: true,
             runValidators: true}).exec()
         .then(deliveryGood => {
             res.status(200).json(deliveryGood);
-            console.log(req.body);
         })
         .catch(error => ErrorHandler.internalServerError(error,res));
 };
@@ -94,7 +121,8 @@ const remove = (req, res) => {
 module.exports = {
     list,
     create,
-    read,
+    readDeliveryDetails,
+    readDeliveryState,
     update,
     remove
 };
