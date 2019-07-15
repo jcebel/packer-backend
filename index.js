@@ -13,7 +13,7 @@ api.set('port', config.port);
 
 const server = http.createServer(api);
 
-mongoose.connect(config.mongoURI, {useNewUrlParser: true})
+mongoose.connect(config.mongoURI, {useNewUrlParser: true, useFindAndModify: false})
     .then(
         () => {
             console.log('SUCCESSFULLY CONNECTED TO DB');

@@ -1,14 +1,10 @@
 "use strict";
 
 const RouteModel = require('../models/Route');
+const internalServerError = require('./ErrorHandler').internalServerError;
 const UserModel = require('../models/User');
 const mongoose = require('mongoose');
 
-
-const internalServerError = (error, res) => res.status(500).json({
-    error: 'Internal server error',
-    message: error.message
-});
 const list = (req, res) => {
     RouteModel.find({}).exec()
         .then(routes => res.status(200).json(routes))
