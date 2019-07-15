@@ -159,7 +159,7 @@ console.log("%       Starting Route Builder      %");
             {currentDuration: Number.MAX_VALUE});
 
         let sortResult = sortItemsByDistance(route.items, distanceMatrixEnd, distEndStruct, firstEndpoint.itemPosition);
-        route.kilometers += firstEndpoint.currentDistance + sortResult.totalDistance;
+        route.meters += firstEndpoint.currentDistance + sortResult.totalDistance;
         route.estimatedTime += firstEndpoint.currentDuration + sortResult.duration;
         route.deliver = sortResult.sortedItems.map((item) => item.destination);
         route.vehicleType = vehicleRecommendation(route);
