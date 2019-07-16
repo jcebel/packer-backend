@@ -58,25 +58,32 @@ const readDeliveryDetails = (req, res) => {
                 error: 'Not Found',
                 message: `Delivery good not found`
             });
-            //add Driver and Route Details
-            RouteModel.find().byDelGoodId(req.params.id)
-                .select("vehicleType").exec()
-                .then(route => {
-                    DriverModel.find().byRouteId(route[0]._id)
-                        .select("driverLicenseNumber").exec()
-                        .then(driver => {
-                            UserModel.find({driver: driver[0]._id})
-                                .select("firstName")
-                                .then(user => {
-                                    let deliveryDetails = {
-                                        deliverygood: deliveryGood,
-                                        vehicleType: route[0].vehicleType,
-                                        driverName: user[0].firstName
-                                    };
-                                    res.status(200).json(deliveryDetails)
-                                }).catch(error => ErrorHandler.internalServerError(error,res));
-                        }).catch(error => ErrorHandler.internalServerError(error,res));
-                }).catch(error => ErrorHandler.internalServerError(error,res));
+            if(deliveryGood.deliveryState === "Waiting for Routing" || "In Bidding Process"){
+                let deliveryDetails = {
+                    deliverygood: deliveryGood
+                };
+                return res.status(200).json(deliveryDetails);
+            } else {
+                //add Driver and Route Details
+                RouteModel.find().byDelGoodId(req.params.id)
+                    .select("vehicleType").exec()
+                    .then(route => {
+                        DriverModel.find().byRouteId(route[0]._id)
+                            .select("driverLicenseNumber").exec()
+                            .then(driver => {
+                                UserModel.find({driver: driver[0]._id})
+                                    .select("firstName")
+                                    .then(user => {
+                                        let deliveryDetails = {
+                                            deliverygood: deliveryGood,
+                                            vehicleType: route[0].vehicleType,
+                                            driverName: user[0].firstName
+                                        };
+                                        res.status(200).json(deliveryDetails)
+                                    }).catch(error => ErrorHandler.internalServerError(error, res));
+                            }).catch(error => ErrorHandler.internalServerError(error, res));
+                    }).catch(error => ErrorHandler.internalServerError(error, res));
+            }
         }).catch(error => ErrorHandler.internalServerError(error,res));
 };
 
