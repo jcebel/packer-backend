@@ -5,8 +5,10 @@ const model = require('./src/models/dataModel');
 
 
 console.log("%       Starting Auction Finisher      %");
-const buildingDate = process.argv[2] ? new Date(process.argv[2]) : new Date(
-    new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getDate(), 12, 0, 0, 0);
+const buildingDate = process.argv[2] ? new Date(process.argv[2]) :
+    new Date(Date.UTC(
+        new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate(),
+        12, 0, 0, 0));
 console.log("%                                      %");
 console.log("%  Build Route For: " + buildingDate.toDateString() + " %");
 console.log("%       Starting Auction Finisher      %");
