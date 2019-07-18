@@ -21,14 +21,13 @@ const register = (req, res) => {
 
     let delClient;
     let driver;
-    for (let i = 0; i < req.body.checkboxIds.length; i++) {
-        if (req.body.checkboxIds[i] === "deliveryClient") {
-            delClient = new DeliveryClientModel();
-            req.body.deliveryClient = delClient._id;
-        } else if (req.body.checkboxIds[i] === "driver") {
-            driver = new DriverModel();
-            req.body.driver = driver._id;
-        }
+    if(req.body.checkboxIds.includes("deliveryClient")){
+        delClient = new DeliveryClientModel();
+        req.body.deliveryClient = delClient._id;
+    }
+    if(req.body.checkboxIds.includes("driver")){
+        driver = new DriverModel();
+        req.body.driver=driver._id;
     }
 
     delete req.body.checkboxIds;
