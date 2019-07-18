@@ -5,6 +5,7 @@ const DriverModel = require('../models/Driver');
 const RouteModel = require('../models/Route');
 const UserModel = require('../models/User');
 const DeliveryClientModel = require('../models/DeliveryClient');
+const currentLoc = require('../services/mockLocationService');
 
 
 const list = (req, res) => {
@@ -58,7 +59,7 @@ const readDeliveryDetails = (req, res) => {
                 error: 'Not Found',
                 message: `Delivery good not found`
             });
-            if(deliveryGood.deliveryState === "Waiting for Routing" || "In Bidding Process"){
+            if(deliveryGood.deliveryState === "Waiting for Routing" || deliveryGood.deliveryState === "In Bidding Process"){
                 let deliveryDetails = {
                     deliverygood: deliveryGood
                 };
@@ -69,7 +70,7 @@ const readDeliveryDetails = (req, res) => {
                     .select("vehicleType").exec()
                     .then(route => {
                         DriverModel.find().byRouteId(route[0]._id)
-                            .select("driverLicenseNumber").exec()
+                            .exec()
                             .then(driver => {
                                 UserModel.find({driver: driver[0]._id})
                                     .select("firstName")
@@ -87,16 +88,33 @@ const readDeliveryDetails = (req, res) => {
         }).catch(error => ErrorHandler.internalServerError(error,res));
 };
 
-const readDeliveryState = (req, res) => {
+const readDeliveryStatus = (req, res) => {
     DeliveryGoodModel.findById(req.params.id)
-        .select('deliveryState')
         .exec()
-        .then(deliveryState => {
-            if (!deliveryState) return res.status(404).json({
+        .then(deliveryGood => {
+            if (!deliveryGood) return res.status(404).json({
                 error: 'Not Found',
                 message: `Delivery good not found`
             });
-            res.status(200).json(deliveryState);
+            let deliveryStatus = {};
+            const deliveryState = deliveryGood.deliveryState;
+            if (deliveryState === "In Delivery") {
+                deliveryStatus = {
+                    deliveryState: deliveryState,
+                    currentLoc: currentLoc()
+                };
+            } else if (deliveryState === "Delivered") {
+                deliveryStatus = {
+                    deliveryState: deliveryState,
+                    currentLoc: deliveryGood.destination
+                }
+            } else {
+                deliveryStatus = {
+                    deliveryState: deliveryState,
+                    currentLoc: deliveryGood.origination
+                };
+            }
+            res.status(200).json(deliveryStatus);
         }).catch(error => ErrorHandler.internalServerError(error,res));
 };
 
@@ -129,7 +147,7 @@ module.exports = {
     list,
     create,
     readDeliveryDetails,
-    readDeliveryState,
+    readDeliveryStatus,
     update,
     remove
 };
