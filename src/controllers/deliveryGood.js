@@ -40,6 +40,10 @@ const create = (req, res) => {
         message: 'The request body is empty'
     });
 
+    const DateOld = new Date(req.body.deliveryDate);
+    const DateNew = new Date(Date.UTC(DateOld.getUTCFullYear(),DateOld.getUTCMonth(), DateOld.getUTCDate(), 12, 0, 0, 0));
+    req.body.deliveryDate = DateNew;
+
     let delGoodId;
     DeliveryGoodModel.create(req.body)
         .then(deliveryGood => {

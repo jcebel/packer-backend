@@ -5,8 +5,10 @@ const model = require('./src/models/dataModel');
 
 
 console.log("%       Starting Auction Finisher      %");
-const buildingDate = process.argv[2] ? new Date(process.argv[2]) : new Date(
-    new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getDate(), 12, 0, 0, 0);
+const buildingDate = process.argv[2] ? new Date(process.argv[2]) :
+    new Date(Date.UTC(
+        new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate(),
+        12, 0, 0, 0));
 console.log("%                                      %");
 console.log("%  Build Route For: " + buildingDate.toDateString() + " %");
 console.log("%       Starting Auction Finisher      %");
@@ -18,7 +20,7 @@ console.log("%       Starting Auction Finisher      %");
     console.log("%      found " + allRoutes.length + " routes    %");
 
     let deliveryGoodIDs = [];
-    allRoutes.forEach(async function(route) {
+    allRoutes.forEach(async function (route) {
         deliveryGoodIDs = deliveryGoodIDs.concat(route.items.map(item => item._id));
     });
     await model.deliveryGood.updateMany({_id: {$in: deliveryGoodIDs}}, {deliveryState: 'Waiting for Pickup'});
