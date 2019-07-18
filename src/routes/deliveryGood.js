@@ -2,8 +2,8 @@
 
 const express  = require('express');
 const middleware = require('../middleware');
-const router   = express.Router();
 const DeliveryGoodController = require('../controllers/deliveryGood');
+const router   = express.Router();
 
 router.get('/', middleware.checkAuthentication, DeliveryGoodController.list);//List all delivery goods
 router.post('/', middleware.checkAuthentication, DeliveryGoodController.create);//Add delivery good
