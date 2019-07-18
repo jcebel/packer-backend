@@ -9,7 +9,10 @@ const listOfToday = (req, res) => {
     RouteModel
         .find().byDate(
         new Date(
-            new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getDate(), 12, 0, 0, 0)).exec()
+            Date.UTC(
+                new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate(),
+                12, 0, 0, 0)))
+        .exec()
         .then(routes => res.status(200).json(routes))
         .catch(error => internalServerError(error, res));
 };
