@@ -18,7 +18,7 @@ console.log("%       Starting Auction Finisher      %");
     console.log("%      found " + allRoutes.length + " routes    %");
 
     let deliveryGoodIDs = [];
-    allRoutes.forEach(async function(route) {
+    allRoutes.forEach(function(route) {
         deliveryGoodIDs = deliveryGoodIDs.concat(route.items.map(item => item._id));
     });
     await model.deliveryGood.updateMany({_id: {$in: deliveryGoodIDs}}, {deliveryState: 'Waiting for Pickup'});
@@ -26,8 +26,31 @@ console.log("%       Starting Auction Finisher      %");
 
     await model.route.updateMany({_id: {$in: allRoutes}}, {auctionOver: true});
     console.log("%       Updated Routes state        %")
+
     await model.route.updateMany({_id: {$in: allRoutes}}, {"items.$[].deliveryState": 'Waiting for Pickup'});
     console.log("%       Updated items state in route        %")
+
+    let i;
+    let driver;
+    for (i = 0; i < allRoutes.length; i++) {
+        let auctionBids = allRoutes[i].auctionBids;
+        if (auctionBids.length === 0) {
+            continue;
+        } else if (auctionBids.length === 1) {
+            driver = await model.driver.findById(auctionBids[0].owner);
+
+        } else{
+            let owner =  auctionBids.reduce(function (a, b) {
+                return a.bid < b.bid ? a.owner : b.owner;
+            });
+            driver = await model.driver.findById(owner);
+        }
+        await driver.routesToDrive.push(mongoose.Types.ObjectId(allRoutes[i]._id));
+        await driver.save();
+    }
+    console.log("%       Updated driver routes        %");
+
+
 })()
     .then(() => {
         console.log("%Successfully executed Auction Finisher %");
