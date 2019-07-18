@@ -10,7 +10,7 @@ console.log("%       Starting Route Builder      %");
 
 const buildingDate = process.argv[2] ? new Date(process.argv[2]) : new Date(Date.UTC(new Date().getUTCFullYear(),new Date().getUTCMonth(), new Date().getUTCDate(), 12, 0, 0, 0));
 console.log("%                                   %");
-console.log("%  Build Route For: " + buildingDate + " %");
+console.log("%  Build Route For: " + buildingDate.toDateString() + " %");
 console.log("%       Starting Route Builder      %");
 
 /**
