@@ -66,7 +66,7 @@ const create = (req, res) => {
 const readDeliveryDetails = (req, res) => {
     getUsersDeliveryGoods(req).then(user => {
         if (hasUserThisDeliveryGood(user, req.params.id)) {
-            DeliveryGoodModel.findById(req.params.id).exec()
+            return DeliveryGoodModel.findById(req.params.id).exec()
                     .then(deliveryGood => {
                         if (!deliveryGood) return res.status(404).json({
                             error: 'Not Found',
@@ -79,13 +79,12 @@ const readDeliveryDetails = (req, res) => {
                             return res.status(200).json(deliveryDetails);
                         } else {
                             //add Driver and Route Details
-                            RouteModel.find().byDelGoodId(req.params.id)
+                            return RouteModel.find().byDelGoodId(req.params.id)
                                 .select("vehicleType").exec()
                                 .then(route => {
-                                    DriverModel.find().byRouteId(route[0]._id)
-                                        .exec()
+                                    return DriverModel.find().byRouteId(route[0]._id).exec()
                                         .then(driver => {
-                                            UserModel.find({driver: driver[0]._id})
+                                            return UserModel.find({driver: driver[0]._id})
                                                 .select("firstName")
                                                 .then(user => {
                                                     let deliveryDetails = {
@@ -94,11 +93,11 @@ const readDeliveryDetails = (req, res) => {
                                                         driverName: user[0].firstName
                                                     };
                                                     res.status(200).json(deliveryDetails)
-                                                }).catch(error => ErrorHandler.internalServerError(error, res));
-                                        }).catch(error => ErrorHandler.internalServerError(error, res));
-                                }).catch(error => ErrorHandler.internalServerError(error, res));
+                                                })
+                                        })
+                                })
                         }
-                    }).catch(error => ErrorHandler.internalServerError(error,res));
+                    })
         } else {
             return res.status(404).json({message: 'Not Authorized'});
         }
@@ -139,8 +138,7 @@ const readDeliveryStatus = (req, res) => {
             } else {
                 return res.status(404).json({message: 'Not Authorized'});
             }
-        })
-        .catch(error => ErrorHandler.internalServerError(error, res));
+        }).catch(error => ErrorHandler.internalServerError(error, res));
 };
 
 const remove = (req, res) => {
