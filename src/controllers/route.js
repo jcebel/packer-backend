@@ -5,14 +5,14 @@ const internalServerError = require('./ErrorHandler').internalServerError;
 const UserModel = require('../models/User');
 const mongoose = require('mongoose');
 
-const list = (req, res) => {
-    RouteModel.find({}).exec()
-        .then(routes => res.status(200).json(routes))
-        .catch(error => internalServerError(error, res));
-};
-
-const listByDate = (req, res) => {
-    RouteModel.find().byDate(req.params["date"]).exec()
+const listOfToday = (req, res) => {
+    RouteModel
+        .find().byDate(
+        new Date(
+            Date.UTC(
+                new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate(),
+                12, 0, 0, 0)))
+        .exec()
         .then(routes => res.status(200).json(routes))
         .catch(error => internalServerError(error, res));
 };
@@ -59,22 +59,22 @@ const updateBid = (req, res) => {
             message: 'The request body is empty'
         });
     }
-    UserModel.findById(req.userId).exec().then( user => {
-        let driverID = user.driver;
-        RouteModel.findByIdAndUpdate(req.params.id, {
-            $push: {
-                auctionBids: {
-                    "owner": mongoose.Types.ObjectId(driverID),
-                    "bid": req.body.bid,
-                    "timestamp": new Date()
-                }
-            },
-            currentBid: req.body.bid
-        }).exec()
-            .then(route => {
-                res.status(200).json(route);
-            })
-            .catch((error) => internalServerError(error, res));
+    UserModel.findById(req.userId).exec().then(user => {
+            let driverID = user.driver;
+            RouteModel.findByIdAndUpdate(req.params.id, {
+                $push: {
+                    auctionBids: {
+                        "owner": mongoose.Types.ObjectId(driverID),
+                        "bid": req.body.bid,
+                        "timestamp": new Date()
+                    }
+                },
+                currentBid: req.body.bid
+            }).exec()
+                .then(route => {
+                    res.status(200).json(route);
+                })
+                .catch((error) => internalServerError(error, res));
         }
     ).catch(error => res.status(500).json({
         error: 'Internal Server Error',
@@ -84,8 +84,7 @@ const updateBid = (req, res) => {
 
 
 module.exports = {
-    list,
-    listByDate,
+    listOfToday,
     read,
     update,
     updateBid

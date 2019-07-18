@@ -4,7 +4,6 @@ const express    = require('express');
 const bodyParser = require('body-parser');
 const helmet     = require('helmet');
 
-const middleware = require('./middleware');
 const deliveryGood = require('./routes/deliveryGood');
 const route = require("./routes/route");
 const auth = require("./routes/auth");
