@@ -30,7 +30,6 @@ const getSquaredDistanceMatrix = function (locations, mode) {
         if (index + 1 !== array.length) {
             const start = location;
             const end = array.slice(index + 1, array.length);
-            console.log("First Call To DistanceMatrix");
             const newData = await getDistanceMatrix(start, end, mode);
             for (let k = 0; k < array.length - (index + 1); k++) {
                 accumulator.rows[index].elements[k + index + 1] = newData.rows[0].elements[k];
