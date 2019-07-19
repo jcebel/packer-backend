@@ -106,20 +106,17 @@ console.log("%       Starting Route Builder      %");
     }
 
     await mongoose.connect(config.mongoURI, {useNewUrlParser: true});
-    const allItems = await model.deliveryGood.find().byDate(buildingDate);
+    const allItems = await model.deliveryGood.find().byDate(buildingDate).limit(30);
     console.log("%      found " + allItems.length + " items for routing    %");
-    if (allItems.length > 12) {
-        throw "Too many Items defined for google Maps API! MAX allowed are 12 - IS: " + allItems.length;
-    } else if (allItems.length < 1) {
-        return;
-    }
 
     const distanceMatrixStart = await GoogleService.getSquaredDistanceMatrix(allItems.map(
         (item) => item.origination.toString()), 'driving'
     );
+
     const distanceMatrixEnd = await GoogleService.getSquaredDistanceMatrix(allItems.map(
         (item) => item.destination.toString()), 'driving'
     );
+
     const distStartStruct = buildDistanceStruct(allItems, distanceMatrixStart);
     const distEndStruct = buildDistanceStruct(allItems, distanceMatrixEnd);
 
