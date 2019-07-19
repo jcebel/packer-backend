@@ -1,9 +1,10 @@
 "use strict";
 
 const RouteModel = require('../models/Route');
-const internalServerError = require('./ErrorHandler').internalServerError;
 const UserModel = require('../models/User');
+const DeliveryGoodModel = require('../models/DeliveryGood');
 const mongoose = require('mongoose');
+const ErrorHandler = require("./ErrorHandler");
 
 const listOfToday = (req, res) => {
     RouteModel
@@ -14,7 +15,7 @@ const listOfToday = (req, res) => {
                 12, 0, 0, 0)))
         .exec()
         .then(routes => res.status(200).json(routes))
-        .catch(error => internalServerError(error, res));
+        .catch(error => ErrorHandler.internalServerError(error, res));
 };
 
 const read = (req, res) => {
@@ -29,7 +30,7 @@ const read = (req, res) => {
             res.status(200).json(route)
 
         })
-        .catch(error => internalServerError(error, res));
+        .catch(error => ErrorHandler.internalServerError(error, res));
 
 };
 
@@ -50,7 +51,7 @@ const update = (req, res) => {
             res.status(200).json(route);
             console.log(req.body);
         })
-        .catch((error) => internalServerError(error, res));
+        .catch((error) => ErrorHandler.internalServerError(error, res));
 };
 const updateBid = (req, res) => {
     if (Object.keys(req.body).length === 0) {
@@ -74,12 +75,19 @@ const updateBid = (req, res) => {
                 .then(route => {
                     res.status(200).json(route);
                 })
-                .catch((error) => internalServerError(error, res));
+                .catch((error) => ErrorHandler.internalServerError(error, res));
         }
-    ).catch(error => res.status(500).json({
-        error: 'Internal Server Error',
-        message: error.message
-    }));
+    ).catch(err => ErrorHandler.internalServerError(err));
+};
+const startDriving = (req, res) => {
+    UserModel.findById(req.userId).exec().then(user => {
+        let driverID = user.driver;
+        //TODO: Validate that this user has this id.
+
+        return RouteModel.findById(req.params.id).then(route =>
+            DeliveryGoodModel.updateMany({_id: {$in: route.items.map(item => item._id)}}, {deliveryState:"In Delivery"})
+        ).then(() =>  res.status(200).json({}));
+    }).catch(err => ErrorHandler.internalServerError(err));
 };
 
 
@@ -87,5 +95,6 @@ module.exports = {
     listOfToday,
     read,
     update,
-    updateBid
+    updateBid,
+    startDriving
 };
