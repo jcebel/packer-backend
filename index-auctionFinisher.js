@@ -37,10 +37,12 @@ console.log("%       Starting Auction Finisher      %");
     for (i = 0; i < allRoutes.length; i++) {
         let auctionBids = allRoutes[i].auctionBids;
         if (auctionBids.length === 0) {
-            continue;
+            deliveryGoodIDs = [];
+            deliveryGoodIDs = deliveryGoodIDs.concat(allRoutes[i].items.map(item => item._id));
+            await model.deliveryGood.updateMany({_id: {$in: deliveryGoodIDs}}, {deliveryState: 'Cancelled'});
+            await model.route.updateMany({_id: {$in: allRoutes}}, {"items.$[].deliveryState": 'Cancelled'});
         } else if (auctionBids.length === 1) {
             driver = await model.driver.findById(auctionBids[0].owner);
-
         } else {
             let owner = auctionBids.reduce(function (a, b) {
                 return a.bid < b.bid ? a.owner : b.owner;
