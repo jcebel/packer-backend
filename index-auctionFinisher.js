@@ -37,18 +37,21 @@ console.log("%       Starting Auction Finisher      %");
     for (i = 0; i < allRoutes.length; i++) {
         let auctionBids = allRoutes[i].auctionBids;
         if (auctionBids.length === 0) {
-            continue;
-        } else if (auctionBids.length === 1) {
-            driver = await model.driver.findById(auctionBids[0].owner);
-
+            deliveryGoodIDs = allRoutes[i].items.map(item => item._id);
+            await model.deliveryGood.updateMany({_id: {$in: deliveryGoodIDs}}, {deliveryState: 'Cancelled'});
+            await model.route.update({_id: allRoutes[i]._id}, {"items.$[].deliveryState": 'Cancelled'});
         } else {
-            let owner = auctionBids.reduce(function (a, b) {
-                return a.bid < b.bid ? a.owner : b.owner;
-            });
-            driver = await model.driver.findById(owner);
+            if (auctionBids.length === 1) {
+                driver = await model.driver.findById(auctionBids[0].owner);
+            } else {
+                let owner = auctionBids.reduce(function (a, b) {
+                    return a.bid < b.bid ? a.owner : b.owner;
+                });
+                driver = await model.driver.findById(owner);
+            }
+            await driver.routesToDrive.push(mongoose.Types.ObjectId(allRoutes[i]._id));
+            await driver.save();
         }
-        await driver.routesToDrive.push(mongoose.Types.ObjectId(allRoutes[i]._id));
-        await driver.save();
     }
     console.log("%       Updated driver routes        %");
 
