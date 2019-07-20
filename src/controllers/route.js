@@ -80,8 +80,8 @@ const updateBid = (req, res) => {
     ).catch(err => ErrorHandler.internalServerError(err));
 };
 
-const changeDeliveryItemsStateOfRoute = (req,res, newState) => {
-     return  UserModel.findById(req.userId).exec().then(user => {
+const changeDeliveryItemsStateOfRoute = (req, res, newState) => {
+    return UserModel.findById(req.userId).exec().then(user => {
         if (!user.driver) {
             return res.status(404).json({message: 'Not Authorized'});
         }
@@ -92,13 +92,14 @@ const changeDeliveryItemsStateOfRoute = (req,res, newState) => {
             }
             return RouteModel.findById(req.params.id).exec()
                 .then(route => {
-                    route.items.forEach(item => {item.deliveryState = newState});
-                    return RouteModel.update({_id: route._id}, route);
+                    route.items.forEach(item => {
+                        item.deliveryState = newState
+                    });
+                    return route.save();
                 })
-                .then(() => {
+                .then((route) => {
 
-                    return RouteModel.findById(req.params.id).then(route =>
-                        DeliveryGoodModel.updateMany({_id: {$in: route.items.map(item => item._id)}}, {deliveryState: newState}));
+                    return DeliveryGoodModel.updateMany({_id: {$in: route.items.map(item => item._id)}}, {deliveryState: newState});
                 })
                 .then(() => res.status(200).json({}))
         })
@@ -106,11 +107,11 @@ const changeDeliveryItemsStateOfRoute = (req,res, newState) => {
 };
 
 const startDriving = (req, res) => {
-    changeDeliveryItemsStateOfRoute(req,res,"In Delivery").catch(err => ErrorHandler.internalServerError(err));
+    changeDeliveryItemsStateOfRoute(req, res, "In Delivery").catch(err => ErrorHandler.internalServerError(err));
 };
 
 const stopDriving = (req, res) => {
-    changeDeliveryItemsStateOfRoute(req,res, "Delivered").catch(err => ErrorHandler.internalServerError(err));
+    changeDeliveryItemsStateOfRoute(req, res, "Delivered").catch(err => ErrorHandler.internalServerError(err));
 };
 
 
