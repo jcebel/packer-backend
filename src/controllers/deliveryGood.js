@@ -84,16 +84,17 @@ const readDeliveryDetails = (req, res) => {
                             .then(route => {
                                 return DriverModel.find().byRouteId(route[0]._id).exec()
                                     .then(driver => {
+                                        if (driver.length === 0) return undefined;
                                         return UserModel.find({driver: driver[0]._id})
                                             .select("firstName")
-                                            .then(user => {
-                                                let deliveryDetails = {
-                                                    deliverygood: deliveryGood,
-                                                    vehicleType: route[0].vehicleType,
-                                                    driverName: user[0].firstName
-                                                };
-                                                res.status(200).json(deliveryDetails)
-                                            })
+                                    })
+                                    .then(user => {
+                                        let deliveryDetails = {
+                                            deliverygood: deliveryGood,
+                                            vehicleType: route[0].vehicleType,
+                                            driverName: user ? user[0].firstName: undefined
+                                        };
+                                        res.status(200).json(deliveryDetails)
                                     })
                             })
                     }
