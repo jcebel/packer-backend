@@ -26,13 +26,13 @@ const locations = [
 ];
 
 
-const getCurrentLoc = function(){
+const getCurrentLoc = function () {
     counter++;
-    if(counter > locations.length){
+    if (counter > locations.length) {
         counter = 0;
-        return locations[locations.length-1]
+        return locations[locations.length - 1]
     }
-    return locations[counter-1];
+    return locations[counter - 1];
 };
 
 module.exports = getCurrentLoc;
