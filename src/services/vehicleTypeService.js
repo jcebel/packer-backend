@@ -4,24 +4,24 @@ const calculateRouteIndex = function(items){
     let sizeIndex = 0;
 
     items.forEach(function(elem) {
-        if(elem.weight === "small"){
+        if(elem.weight.toLowerCase() === "light"){
             weightIndex = 1;
         }
-        if(elem.size === "small"){
+        if(elem.size.toLowerCase() === "small"){
             sizeIndex = 1;
         }
 
-        if(elem.weight === "medium"){
+        if(elem.weight.toLowerCase() === "medium"){
             weightIndex = 5;
         }
-        if(elem.size === "medium"){
+        if(elem.size.toLowerCase() === "medium"){
             sizeIndex = 5;
         }
 
-        if(elem.weight === "large"){
+        if(elem.weight.toLowerCase() === "heavy"){
             weightIndex = 10;
         }
-        if(elem.size === "large"){
+        if(elem.size.toLowerCase() === "large"){
             sizeIndex = 10;
         }
 
