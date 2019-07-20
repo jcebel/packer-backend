@@ -23,7 +23,7 @@ const priceCalculation = (req, res) => {
             res.status(200).json({
                 price: price,
                 distance: distance
-            }); //return price;
+            });
         }).catch((e) => {
         console.log(e);
     });
