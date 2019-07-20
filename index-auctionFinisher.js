@@ -20,7 +20,7 @@ console.log("%       Starting Auction Finisher      %");
     console.log("%      found " + allRoutes.length + " routes    %");
 
     let deliveryGoodIDs = [];
-    allRoutes.forEach(function(route) {
+    allRoutes.forEach(function (route) {
         deliveryGoodIDs = deliveryGoodIDs.concat(route.items.map(item => item._id));
     });
     await model.deliveryGood.updateMany({_id: {$in: deliveryGoodIDs}}, {deliveryState: 'Waiting for Pickup'});
@@ -41,8 +41,8 @@ console.log("%       Starting Auction Finisher      %");
         } else if (auctionBids.length === 1) {
             driver = await model.driver.findById(auctionBids[0].owner);
 
-        } else{
-            let owner =  auctionBids.reduce(function (a, b) {
+        } else {
+            let owner = auctionBids.reduce(function (a, b) {
                 return a.bid < b.bid ? a.owner : b.owner;
             });
             driver = await model.driver.findById(owner);
