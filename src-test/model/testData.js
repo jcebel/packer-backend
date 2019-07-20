@@ -487,7 +487,7 @@ const executeTest = function () {
                             owner: driver2._id,
                             bid: 30,
                             timestamp: new Date('2019-06-24T16:00:00')
-                        }, { // TODO Add one drive that bids inbetween
+                        }, {
                             owner: driver2._id,
                             bid: 23,
                             timestamp: new Date('2019-06-24T17:01:00')

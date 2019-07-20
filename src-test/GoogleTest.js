@@ -1,4 +1,4 @@
-const GoogleService  = require("../src/services/GoogleService");
+const GoogleService = require("../src/services/GoogleService");
 
 const handleErr = function (err) {
     console.log(err);
@@ -13,7 +13,7 @@ const executeGoogleTest = function () {
             console.log(data.rows[0].elements[0].distance.value);
             console.log(data.rows[0].elements);
         }).catch((e) => {
-            console.log(e);
+        console.log(e);
     });
 };
 

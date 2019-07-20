@@ -1,8 +1,8 @@
 "use strict";
 
-const express    = require('express');
+const express = require('express');
 const bodyParser = require('body-parser');
-const helmet     = require('helmet');
+const helmet = require('helmet');
 
 const deliveryGood = require('./routes/deliveryGood');
 const route = require("./routes/route");
@@ -18,7 +18,7 @@ const api = express();
 api.use(cors());
 api.use(helmet());
 api.use(bodyParser.json());
-api.use(bodyParser.urlencoded({ extended: false }));
+api.use(bodyParser.urlencoded({extended: false}));
 
 
 api.get('/', (req, res) => {
