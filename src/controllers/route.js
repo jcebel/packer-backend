@@ -3,6 +3,7 @@
 const RouteModel = require('../models/Route');
 const UserModel = require('../models/User');
 const DeliveryGoodModel = require('../models/DeliveryGood');
+const DriverModel = require('../models/Driver');
 const mongoose = require('mongoose');
 const ErrorHandler = require("./ErrorHandler");
 
@@ -79,14 +80,29 @@ const updateBid = (req, res) => {
         }
     ).catch(err => ErrorHandler.internalServerError(err));
 };
+
 const startDriving = (req, res) => {
     UserModel.findById(req.userId).exec().then(user => {
-        let driverID = user.driver;
-        //TODO: Validate that this user has this id.
+        if (!user.driver) {
+            return res.status(404).json({message: 'Not Authorized'});
+        }
 
-        return RouteModel.findById(req.params.id).then(route =>
-            DeliveryGoodModel.updateMany({_id: {$in: route.items.map(item => item._id)}}, {deliveryState:"In Delivery"})
-        ).then(() =>  res.status(200).json({}));
+        return DriverModel.findById(user.driver._id).then((driver) => {
+            if (!driver.routesToDrive.includes(req.params.id)) {
+                return res.status(404).json({message: 'Not Authorized'});
+            }
+            return RouteModel.findById(req.params.id).exec()
+                .then(route => {
+                    route.items.forEach(item => {item.deliveryState = "In Delivery"});
+                    return RouteModel.update({_id: route._id}, route);
+                })
+                .then(() => {
+
+                    return RouteModel.findById(req.params.id).then(route =>
+                        DeliveryGoodModel.updateMany({_id: {$in: route.items.map(item => item._id)}}, {deliveryState: "In Delivery"}));
+                })
+                .then(() => res.status(200).json({}))
+        })
     }).catch(err => ErrorHandler.internalServerError(err));
 };
 
