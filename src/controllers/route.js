@@ -50,7 +50,6 @@ const update = (req, res) => {
         }).exec()
         .then(route => {
             res.status(200).json(route);
-            console.log(req.body);
         })
         .catch((error) => ErrorHandler.internalServerError(error, res));
 };
@@ -81,8 +80,8 @@ const updateBid = (req, res) => {
     ).catch(err => ErrorHandler.internalServerError(err));
 };
 
-const startDriving = (req, res) => {
-    UserModel.findById(req.userId).exec().then(user => {
+const changeDeliveryItemsStateOfRoute = (req,res, newState) => {
+     return  UserModel.findById(req.userId).exec().then(user => {
         if (!user.driver) {
             return res.status(404).json({message: 'Not Authorized'});
         }
@@ -93,17 +92,25 @@ const startDriving = (req, res) => {
             }
             return RouteModel.findById(req.params.id).exec()
                 .then(route => {
-                    route.items.forEach(item => {item.deliveryState = "In Delivery"});
+                    route.items.forEach(item => {item.deliveryState = newState});
                     return RouteModel.update({_id: route._id}, route);
                 })
                 .then(() => {
 
                     return RouteModel.findById(req.params.id).then(route =>
-                        DeliveryGoodModel.updateMany({_id: {$in: route.items.map(item => item._id)}}, {deliveryState: "In Delivery"}));
+                        DeliveryGoodModel.updateMany({_id: {$in: route.items.map(item => item._id)}}, {deliveryState: newState}));
                 })
                 .then(() => res.status(200).json({}))
         })
-    }).catch(err => ErrorHandler.internalServerError(err));
+    })
+};
+
+const startDriving = (req, res) => {
+    changeDeliveryItemsStateOfRoute(req,res,"In Delivery").catch(err => ErrorHandler.internalServerError(err));
+};
+
+const stopDriving = (req, res) => {
+    changeDeliveryItemsStateOfRoute(req,res, "Delivered").catch(err => ErrorHandler.internalServerError(err));
 };
 
 
@@ -112,5 +119,6 @@ module.exports = {
     read,
     update,
     updateBid,
-    startDriving
+    startDriving,
+    stopDriving
 };
