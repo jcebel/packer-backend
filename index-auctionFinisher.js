@@ -41,6 +41,7 @@ console.log("%       Starting Auction Finisher      %");
             deliveryGoodIDs = deliveryGoodIDs.concat(allRoutes[i].items.map(item => item._id));
             await model.deliveryGood.updateMany({_id: {$in: deliveryGoodIDs}}, {deliveryState: 'Cancelled'});
             await model.route.updateMany({_id: {$in: allRoutes}}, {"items.$[].deliveryState": 'Cancelled'});
+            continue;
         } else if (auctionBids.length === 1) {
             driver = await model.driver.findById(auctionBids[0].owner);
         } else {
