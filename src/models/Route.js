@@ -10,12 +10,12 @@ const RouteSchema = new mongoose.Schema({
     estimatedTime: Number,
     items: [deliveryGood.schema],
     auctionBids: [{
-        owner:{type:mongoose.SchemaTypes.ObjectId, ref:"Driver"},
-        bid:Number,
+        owner: {type: mongoose.SchemaTypes.ObjectId, ref: "Driver"},
+        bid: Number,
         timestamp: Date
     }],
-    collect:[Address],
-    deliver:[Address],
+    collect: [Address],
+    deliver: [Address],
     auctionOver: Boolean
 });
 
