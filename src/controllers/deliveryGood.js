@@ -149,11 +149,6 @@ const readDeliveryStatus = (req, res) => {
                             };
                             return res.status(200).json(deliveryStatus);
                         }
-
-                        else if (deliveryState === "In Delivery" && deliveryGood.name === "Festivalticket") {
-
-                        }
-
                         else {
                             const deliveryStatus = {
                                 deliveryState: deliveryState,
