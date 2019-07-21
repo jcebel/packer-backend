@@ -1,36 +1,62 @@
 # packer-backend
 This is the Backend Application of Packer.
 
-## Setup (before first run)
+## Production environment
+Currently the packer-backend is also deployed on AWS. 
+For more information please contact [alex](mailto:alexandros.tsakpinis@googlemail.com).
 
-Go to your project root folder via command line
+### Local Production-like testing
+
+Go to your project root folder via command line:
 ```
 cd path/to/workspace/packer-backend
 ```
 
-**Install node dependencies**
+Install node dependencies:
 
 ```
 npm install
 ```
 
-**Set up your database**
-
-* Start the database server
+Start the database server:
 ```
 mongod --dbpath relative/path/to/database
 ```
 
-**Set the environment variables**
-
-This variables are based in your local configuration
+You may alter the Mongo Location. These variables are set as your environment variables.
 ```bash
 export PORT=3000
-export MONGODB_URI="mongodb://localhost:27017/moviedb"
+export MONGODB_URI="mongodb://localhost:27017/packerdb"
 export JWT_SECRET="very secret secret"
 ```
 
-## Start the project
+Start the backend server
+```bash
+npm start
+```
+
+#### Route Building Process
+
+This triggers the route building based on the existing DeliveryGoods of today with a delivery Date of today.
+You may add optionally a specific date to the call. This creates routes with all Delivery Goods for the specified Date.
+
+```bash
+npm run routing [<date in format YYYY-MM-DD>]
+```
+
+#### Auction Finish Process
+
+This triggers the finishing of the current running auction. 
+It sets the deliveryState of each DeliveryGood of 
+today's routes to "Waiting for Pickup" and the auctionOver variable of each route of today to "true".
+This method should be executed after the route builder.
+
+You may add optionally add a specific date to the call. **This is more for dev-tests** 
+```bash
+npm run finish [<date in format YYYY-MM-DD>]
+```
+
+## Development environment start of the project
 
 **Development environment**
 ```bash
@@ -42,36 +68,7 @@ npm run devstart
 npm test
 ```
 This will allow you to execute the scripts contained in src-test/model/testData.js. 
-Those tests are currently set up to fill the database step by step.
-You may change the scripts to your own needs. 
+Those tests are currently set up to fill the database with test data during development.
 
-**Production environment**
-```bash
-npm start
-```
-
-**Route Building Process**
-
-This triggers the route building based on the existing DeliveryGoods of today with a delivery Date of today.
-You may add optionally a specific date for the call. This creates a route with all Delivery Goods for the specified Date.
-
-```bash
-npm run routing [<date in format YYYY-MM-DD>]
-```
-
-**Hint:** The current mock data contains valid items for the specific date `2019-10-17T22:00:00.000+00:00`.
-
-
-**Auction Finish Process**
-
-This triggers the auction finish based on the existing delivergoods of the routes which were calcualted for today. This 
-methods is executed after the route builder.
-
-You may add optionally a specific date for the call. This sets the deliveryState of each DeliveryGood of todays routes 
-to "Waiting for Pickup" and the auctionOver variable of each route of today to "true".
-
-```bash
-npm run finish [<date in format YYYY-MM-DD>]
-```
-
-**Hint:** The current mock data contains valid items for the specific date `"2019-06-24"`.
+**It is not necessary nor recommended to use these scripts for testing in a production-like environment.**
+The scripts are only for development purposes. You may fill the database by your own interactions with the application.
