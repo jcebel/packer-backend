@@ -5,7 +5,9 @@ const DriverModel = require('../models/Driver');
 const RouteModel = require('../models/Route');
 const UserModel = require('../models/User');
 const DeliveryClientModel = require('../models/DeliveryClient');
-const currentLoc = require('../services/mockLocationService');
+const getCurrentLoc = require('../services/mockLocationService');
+
+let counter = 0;
 
 const getUsersDeliveryGoods = (req) => {
     return new Promise((resolve, reject) =>
@@ -114,27 +116,47 @@ const readDeliveryStatus = (req, res) => {
                     .then(deliveryGood => {
                         if (!deliveryGood) return res.status(404).json({
                             error: 'Not Found',
-                            message: `Delivery good not found`
+                            message: 'Delivery good not found'
                         });
-                        let deliveryStatus = {};
                         const deliveryState = deliveryGood.deliveryState;
                         if (deliveryState === "In Delivery") {
-                            deliveryStatus = {
-                                deliveryState: deliveryState,
-                                currentLoc: currentLoc()
-                            };
+//******************************************************************************
+// TODO: The following lines are only for demo purposes and should not be included in production
+                            if(deliveryGood.name === "Festivalticket"){
+                                const deliveryStatus = {
+                                    name: deliveryGood.name,
+                                    deliveryState: deliveryState,
+                                    currentLoc: getCurrentLoc()
+                                };
+                                return res.status(200).json(deliveryStatus);
+                            } else{
+//******************************************************************************
+                            return RouteModel.find().byDelGoodId(req.params.id).select('collect deliver').then( route => {
+                                const addresses = route[0].collect.concat(route[0].deliver);
+                                if(counter === addresses.length) counter = 0;
+                                const currentLoc = addresses[counter];
+                                counter++;
+                                const deliveryStatus = {
+                                    deliveryState: deliveryState,
+                                    currentLoc: currentLoc
+                                };
+                                return res.status(200).json(deliveryStatus);
+                            })}//TODO: Delete last curly bracket when deleting the demo part above
                         } else if (deliveryState === "Delivered") {
-                            deliveryStatus = {
+                            const deliveryStatus = {
                                 deliveryState: deliveryState,
                                 currentLoc: deliveryGood.destination
-                            }
-                        } else {
-                            deliveryStatus = {
+                            };
+                            return res.status(200).json(deliveryStatus);
+                        }
+                        else {
+                            const deliveryStatus = {
                                 deliveryState: deliveryState,
                                 currentLoc: deliveryGood.origination
                             };
+                            return res.status(200).json(deliveryStatus);
                         }
-                        res.status(200).json(deliveryStatus);
+
                     })
             } else {
                 return res.status(404).json({message: 'Not Authorized'});
