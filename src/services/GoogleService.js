@@ -24,7 +24,6 @@ const getSquaredDistanceMatrix = function (locations, mode) {
 
     const dataMatrix = buildEmptyDataMatrix(locations.length);
     return locations.reduce(async (acc, location, index, array) => {
-       // util.inspect(acc);
         const accumulator = await acc;
 
         if (index + 1 !== array.length) {

@@ -42,7 +42,7 @@ const create = (req, res) => {
     });
 
     const DateOld = new Date(req.body.deliveryDate);
-    const DateNew = new Date(Date.UTC(DateOld.getUTCFullYear(),DateOld.getUTCMonth(), DateOld.getUTCDate(), 12, 0, 0, 0));
+    const DateNew = new Date(Date.UTC(DateOld.getUTCFullYear(), DateOld.getUTCMonth(), DateOld.getUTCDate(), 12, 0, 0, 0));
     req.body.deliveryDate = DateNew;
 
     let delGoodId;
@@ -67,37 +67,38 @@ const readDeliveryDetails = (req, res) => {
     getUsersDeliveryGoods(req).then(user => {
         if (hasUserThisDeliveryGood(user, req.params.id)) {
             return DeliveryGoodModel.findById(req.params.id).exec()
-                    .then(deliveryGood => {
-                        if (!deliveryGood) return res.status(404).json({
-                            error: 'Not Found',
-                            message: `Delivery good not found`
-                        });
-                        if(deliveryGood.deliveryState === "Waiting for Routing" || deliveryGood.deliveryState === "In Bidding Process"){
-                            let deliveryDetails = {
-                                deliverygood: deliveryGood
-                            };
-                            return res.status(200).json(deliveryDetails);
-                        } else {
-                            //add Driver and Route Details
-                            return RouteModel.find().byDelGoodId(req.params.id)
-                                .select("vehicleType").exec()
-                                .then(route => {
-                                    return DriverModel.find().byRouteId(route[0]._id).exec()
-                                        .then(driver => {
-                                            return UserModel.find({driver: driver[0]._id})
-                                                .select("firstName")
-                                                .then(user => {
-                                                    let deliveryDetails = {
-                                                        deliverygood: deliveryGood,
-                                                        vehicleType: route[0].vehicleType,
-                                                        driverName: user[0].firstName
-                                                    };
-                                                    res.status(200).json(deliveryDetails)
-                                                })
-                                        })
-                                })
-                        }
-                    })
+                .then(deliveryGood => {
+                    if (!deliveryGood) return res.status(404).json({
+                        error: 'Not Found',
+                        message: `Delivery good not found`
+                    });
+                    if (deliveryGood.deliveryState === "Waiting for Routing" || deliveryGood.deliveryState === "In Bidding Process") {
+                        let deliveryDetails = {
+                            deliverygood: deliveryGood
+                        };
+                        return res.status(200).json(deliveryDetails);
+                    } else {
+                        //add Driver and Route Details
+                        return RouteModel.find().byDelGoodId(req.params.id)
+                            .select("vehicleType").exec()
+                            .then(route => {
+                                return DriverModel.find().byRouteId(route[0]._id).exec()
+                                    .then(driver => {
+                                        if (driver.length === 0) return undefined;
+                                        return UserModel.find({driver: driver[0]._id})
+                                            .select("firstName")
+                                    })
+                                    .then(user => {
+                                        let deliveryDetails = {
+                                            deliverygood: deliveryGood,
+                                            vehicleType: route[0].vehicleType,
+                                            driverName: user ? user[0].firstName: undefined
+                                        };
+                                        res.status(200).json(deliveryDetails)
+                                    })
+                            })
+                    }
+                })
         } else {
             return res.status(404).json({message: 'Not Authorized'});
         }
@@ -109,32 +110,32 @@ const readDeliveryStatus = (req, res) => {
         .then(user => {
             if (hasUserThisDeliveryGood(user, req.params.id)) {
                 return DeliveryGoodModel.findById(req.params.id)
-                        .exec()
-                        .then(deliveryGood => {
-                            if (!deliveryGood) return res.status(404).json({
-                                error: 'Not Found',
-                                message: `Delivery good not found`
-                            });
-                            let deliveryStatus = {};
-                            const deliveryState = deliveryGood.deliveryState;
-                            if (deliveryState === "In Delivery") {
-                                deliveryStatus = {
-                                    deliveryState: deliveryState,
-                                    currentLoc: currentLoc()
-                                };
-                            } else if (deliveryState === "Delivered") {
-                                deliveryStatus = {
-                                    deliveryState: deliveryState,
-                                    currentLoc: deliveryGood.destination
-                                }
-                            } else {
-                                deliveryStatus = {
-                                    deliveryState: deliveryState,
-                                    currentLoc: deliveryGood.origination
-                                };
+                    .exec()
+                    .then(deliveryGood => {
+                        if (!deliveryGood) return res.status(404).json({
+                            error: 'Not Found',
+                            message: `Delivery good not found`
+                        });
+                        let deliveryStatus = {};
+                        const deliveryState = deliveryGood.deliveryState;
+                        if (deliveryState === "In Delivery") {
+                            deliveryStatus = {
+                                deliveryState: deliveryState,
+                                currentLoc: currentLoc()
+                            };
+                        } else if (deliveryState === "Delivered") {
+                            deliveryStatus = {
+                                deliveryState: deliveryState,
+                                currentLoc: deliveryGood.destination
                             }
-                            res.status(200).json(deliveryStatus);
-                        })
+                        } else {
+                            deliveryStatus = {
+                                deliveryState: deliveryState,
+                                currentLoc: deliveryGood.origination
+                            };
+                        }
+                        res.status(200).json(deliveryStatus);
+                    })
             } else {
                 return res.status(404).json({message: 'Not Authorized'});
             }
