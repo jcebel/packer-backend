@@ -1,6 +1,8 @@
 # packer-backend
 This is the Backend Application of Packer.
 
+This was part of a student's project at Technical University of Munich
+
 ## Production environment
 Currently the packer-backend is also deployed on AWS. 
 For more information please contact [alex](mailto:alexandros.tsakpinis@googlemail.com).
